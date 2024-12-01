@@ -1,8 +1,11 @@
 all: elle py
 
-elle: solution.le
-	@ellec solution.le -t && ./solution
+elle: solution
+	@./solution
 	@rm ./solution
+
+solution:
+	@ellec solution.le -t
 
 py: solution.py
 	@python3 solution.py
