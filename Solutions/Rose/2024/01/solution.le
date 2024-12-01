@@ -17,6 +17,8 @@ fn lists(Array<i32> *ls, Array<i32> *rs, string input) {
 fn s1(Array<i32> *ls, Array<i32> *rs) {
     Array<i32> *lss = ls.clone();
     Array<i32> *rss = rs.clone();
+    defer lss.free();
+    defer rss.free();
 
     lss.sort();
     rss.sort();
