@@ -1,8 +1,8 @@
-all: make-elle make-py
+all: elle py
 
-make-elle: solution.le
+elle: solution.le
 	@ellec solution.le -t && ./solution
 	@rm ./solution
 
-make-py: solution.py
+py: solution.py
 	@python3 solution.py
