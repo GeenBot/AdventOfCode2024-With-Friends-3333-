@@ -1,11 +1,18 @@
 all: elle py
 
 elle: solution
-	@./solution
-	@rm ./solution
+	./solution
 
 solution:
-	@ellec solution.le -t
+	ellec solution.le -t
 
 py: solution.py
-	@python3 solution.py
+	python3 solution.py
+
+time:
+	hyperfine --warmup 3 'make elle'
+	hyperfine --warmup 3 'make py'
+
+.PHONY: clean
+clean:
+	rm solution
