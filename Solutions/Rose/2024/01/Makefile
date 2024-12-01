@@ -15,4 +15,4 @@ time:
 
 .PHONY: clean
 clean:
-	rm solution
+	rm -f solution
