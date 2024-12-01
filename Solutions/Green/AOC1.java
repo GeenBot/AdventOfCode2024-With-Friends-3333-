@@ -32,7 +32,7 @@ class AOC1 {
         public static void main(String args[]) throws FileNotFoundException {
             File f = new File("AOC1.text");
             Scanner s = new Scanner(f);
-    
+
             Queue<Integer> q1 = new LinkedList<Integer>();
             Queue<Integer> q2 = new LinkedList<Integer>();
             while (s.hasNextLine()) {
@@ -73,7 +73,7 @@ class AOC1 {
 
 
     public static Queue<Integer> SortQueue(Queue<Integer> q) {
-        ArrayList<Integer> tempList = new ArrayList<Integer>();        
+        ArrayList<Integer> tempList = new ArrayList<Integer>();
         while (!q.isEmpty()) {
             boolean isAdded = false;
             for (int i = 0; i < tempList.size(); i++) {
