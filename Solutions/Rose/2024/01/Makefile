@@ -3,7 +3,7 @@ all: elle py
 elle: solution
 	./solution
 
-solution:
+solution: solution.le
 	ellec solution.le -t
 
 py: solution.py
