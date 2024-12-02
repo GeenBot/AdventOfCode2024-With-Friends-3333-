@@ -17,28 +17,17 @@ def is_safe2(r):
 
     return False
 
-def s1(d):
+def sol(d, p2):
     c = 0
 
     for l in d.strip().split("\n"):
         r = list(map(int, l.split()))
-        if is_safe(r):
-            c += 1
-
-    return c
-
-def s2(d):
-    c = 0
-
-    for l in d.strip().split("\n"):
-        r = list(map(int, l.split()))
-        if is_safe2(r):
+        if is_safe2(r) if p2 else is_safe(r):
             c += 1
 
     return c
 
 with open("input.txt", 'r') as f:
-    print(s1(f.read()))
-
-with open("input.txt", 'r') as f:
-    print(s2(f.read()))
+    d = f.read()
+    print(sol(d, False))
+    print(sol(d, True))
