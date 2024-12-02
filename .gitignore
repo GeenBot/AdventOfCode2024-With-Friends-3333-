@@ -1,2 +1,3 @@
 # Don't commit your input files
 *.txt
+.DS_Store
