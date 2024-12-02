@@ -1,95 +1,50 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.*;
 
-class AOC1 {
-    /*
+public class AOC1 {
     public static void main(String args[]) throws FileNotFoundException {
         File f = new File("AOC1.text");
         Scanner s = new Scanner(f);
 
-        Queue<Integer> q1 = new LinkedList<Integer>();
-        Queue<Integer> q2 = new LinkedList<Integer>();
+        List<Integer> q1 = new ArrayList<>();
+        List<Integer> q2 = new ArrayList<>();
+
         while (s.hasNextLine()) {
             String[] str = s.nextLine().split("   ");
             q1.add(Integer.parseInt(str[0]));
             q2.add(Integer.parseInt(str[1]));
         }
-        q1 = SortQueue(q1);
-        q2 = SortQueue(q2);
+
+        int[] q1Array = q1.stream().mapToInt(i -> i).toArray();
+        int[] q2Array = q2.stream().mapToInt(i -> i).toArray();
+
+        Arrays.parallelSort(q1Array);
+        Arrays.parallelSort(q2Array);
+
+        q1.clear();
+        q2.clear();
+        for (int i : q1Array) q1.add(i);
+        for (int i : q2Array) q2.add(i);
+
         int count = 0;
-        while (!q1.isEmpty()) {
-            int num = q1.remove() - q2.remove();
-            num = Math.abs(num);
-            count += num;
+        for (int i = 0; i < q1.size(); i++) {
+            count += Math.abs(q1.get(i) - q2.get(i));
         }
         System.out.println(count);
-    }
-        */
-        public static void main(String args[]) throws FileNotFoundException {
-            File f = new File("AOC1.text");
-            Scanner s = new Scanner(f);
 
-            Queue<Integer> q1 = new LinkedList<Integer>();
-            Queue<Integer> q2 = new LinkedList<Integer>();
-            while (s.hasNextLine()) {
-                String[] str = s.nextLine().split("   ");
-                q1.add(Integer.parseInt(str[0]));
-                q2.add(Integer.parseInt(str[1]));
-            }
-            q1 = SortQueue(q1);
-            q2 = SortQueue(q2);
-            int count = 0;
-            while (!q1.isEmpty()) {
-                Queue<Integer> tempQueue = new LinkedList<Integer>();
-                tempQueue.addAll(q2);
-                int num = q1.remove();
-                int occurances = 0;
-                while(!tempQueue.isEmpty()) {
-                    if (tempQueue.peek() == num) {
-                        occurances++;
-                    } else if (tempQueue.peek() > num) {
-                        break;
-                    }
-                    tempQueue.remove();
-                }
-                count += occurances * num;
-                while (!q1.isEmpty()) {
-                    if (q1.peek() == num) {
-                        count += occurances * num;
-                        q1.remove();
-                    } else {
-                        break;
-                    }
-                }
-                q2 = tempQueue;
-            }
-            System.out.println(count);
-            s.close();
+        Map<Integer, Integer> freqMap = new HashMap<>();
+        for (int num : q2) {
+            freqMap.put(num, freqMap.getOrDefault(num, 0) + 1);
         }
 
+        int count2 = 0;
+        for (int num : q1) {
+            int occurrences = freqMap.getOrDefault(num, 0);
+            count2 += occurrences * num;
+        }
+        System.out.println(count2);
 
-    public static Queue<Integer> SortQueue(Queue<Integer> q) {
-        ArrayList<Integer> tempList = new ArrayList<Integer>();
-        while (!q.isEmpty()) {
-            boolean isAdded = false;
-            for (int i = 0; i < tempList.size(); i++) {
-                if (q.peek() < tempList.get(i)) {
-                    tempList.add(i, q.remove());
-                    isAdded = true;
-                    break;
-                }
-            }
-            if (!isAdded) {
-                tempList.add(q.remove());
-            }
-        }
-        for (int i = 0; i < tempList.size(); i++) {
-            q.add(tempList.get(i));
-        }
-        return q;
+        s.close();
     }
 }

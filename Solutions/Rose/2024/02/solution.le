@@ -1,0 +1,94 @@
+use std/collections/array;
+use std/split;
+use std/cast;
+use std/io;
+
+fn is_safe(Array<i32> *r) {
+    Array<i32> *diff = Array::with_capacity(r.len() - 1);
+    defer diff.free();
+
+    for i32 i = 0; i < r.len() - 1; i += 1 {
+        diff.push(r.elements[i + 1] - r.elements[i]);
+    }
+
+    bool inc = true;
+    bool dec = true;
+
+    for i32 i = 0; i < diff.len(); i += 1 {
+        i32 d = diff.elements[i];
+
+        if d < 1 || d > 3 {
+            inc = false;
+        }
+
+        if d < -3 || d > -1 {
+            dec = false;
+        }
+
+        if !inc && !dec {
+            return false;
+        }
+    }
+
+    return inc || dec;
+}
+
+fn is_safe2(Array<i32> *r) {
+    if is_safe(r) {
+        return true;
+    }
+
+    for i32 i = 0; i < r.len(); i += 1 {
+        Array<i32> *r2 = Array::with_capacity(r.len() - 1);
+        defer r2.free();
+
+        for i32 j = 0; j < r.len(); j += 1 {
+            if j != i {
+                r2.push(r.elements[j]);
+            }
+        }
+
+        if is_safe(r2) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+fn solution(string d, bool p2) -> i32 {
+    Array<string> *lines = d.split("\n");
+    defer lines.free();
+
+    i32 c = 0;
+
+    for i32 i = 0; i < lines.len(); i += 1 {
+        string l = lines.elements[i];
+        Array<string> *parts = l.split(" ");
+        Array<i32> *r = Array::with_capacity(parts.len());
+        defer parts.free();
+        defer r.free();
+
+        for i32 j = 0; j < parts.len(); j += 1 {
+            r.push(i32::parse(parts.elements[j]));
+        }
+
+        if p2 {
+            if is_safe2(r) {
+                c += 1;
+            }
+        } else {
+            if is_safe(r) {
+                c += 1;
+            }
+        }
+    }
+
+    return c;
+}
+
+fn main() {
+    string input = io::read_to_string("input.txt");
+    io::dbg(solution(input, false));
+    io::dbg(solution(input, true));
+}
