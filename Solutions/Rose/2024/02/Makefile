@@ -10,8 +10,7 @@ py: solution.py
 	python3 solution.py
 
 time:
-	hyperfine --warmup 3 'make elle'
-	hyperfine --warmup 3 'make py'
+	hyperfine --warmup 3 'make solution' 'make py'
 
 .PHONY: clean
 clean:
