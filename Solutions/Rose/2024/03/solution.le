@@ -1,5 +1,44 @@
+use std/collections/array;
+use std/split;
+use std/cast;
 use std/io;
 
+fn s1(string contents) {
+    Array<string> *parts = contents.split("mul(");
+    i32 sum = 0;
+
+    for i32 i = 0; i < parts.len(); i += 1 {
+        Array<string> *numbers = parts.elements[i].split(",");
+
+        if numbers.len() > 1 {
+            i32 left;
+
+            string end = "";
+            i64 right = i64::strtol(numbers.elements[1], &end, 10);
+
+            if i32::try_parse(numbers.elements[0], &left) && end[0] == ')' {
+                sum += left * right;
+            }
+        }
+    }
+
+    return sum;
+}
+
+fn s2(string contents) {
+    Array<string> *dos = contents.split("do()");
+    i32 sum = 0;
+
+    for i32 i = 0; i < dos.len(); i += 1 {
+        string contents = dos.elements[i].split("don't()").elements[0];
+        sum += s1(contents);
+    }
+
+    return sum;
+}
+
 fn main() {
-    io::eprintln("TODO");
+    string contents = io::read_to_string("input.txt");
+    io::dbg(s1(contents));
+    io::dbg(s2(contents));
 }
