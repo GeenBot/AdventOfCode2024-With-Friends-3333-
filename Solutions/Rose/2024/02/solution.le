@@ -9,14 +9,14 @@ fn is_safe(Array<i32> *r) {
     defer diff.free();
 
     for i32 i = 0; i < r.len() - 1; i += 1 {
-        diff.push(r.elements[i + 1] - r.elements[i]);
+        diff.push(r[i + 1] - r[i]);
     }
 
     bool inc = true;
     bool dec = true;
 
     for i32 i = 0; i < diff.len(); i += 1 {
-        i32 d = diff.elements[i];
+        i32 d = diff[i];
 
         if d < 1 || d > 3 {
             inc = false;
@@ -60,7 +60,7 @@ fn solution(string d, bool p2) -> i32 {
     i32 c = 0;
 
     for i32 i = 0; i < lines.len(); i += 1 {
-        string l = lines.elements[i];
+        string l = lines[i];
         Array<string> *parts = l.split(" ");
         Array<i32> *r = Array::with_capacity(parts.len());
 
@@ -68,7 +68,7 @@ fn solution(string d, bool p2) -> i32 {
         defer r.free();
 
         for i32 j = 0; j < parts.len(); j += 1 {
-            r.push(i32::parse(parts.elements[j]));
+            r.push(i32::parse(parts[j]));
         }
 
         if p2 {

@@ -8,9 +8,9 @@ fn lists(Array<i32> *ls, Array<i32> *rs, string input) {
     Array<string> *parts = input.split("\n");
 
     for i32 i = 0; i < parts.len(); i += 1 {
-        Array<string> *numbers = parts.elements[i].split("   ");
-        ls.push(i32::parse(numbers.elements[0]));
-        rs.push(i32::parse(numbers.elements[1]));
+        Array<string> *numbers = parts[i].split("   ");
+        ls.push(i32::parse(numbers[0]));
+        rs.push(i32::parse(numbers[1]));
     }
 }
 
@@ -26,7 +26,7 @@ fn s1(Array<i32> *ls, Array<i32> *rs) {
     i32 dist = 0;
 
     for i32 i = 0; i < lss.len(); i += 1 {
-        dist += math::abs(lss.elements[i] - rss.elements[i]);
+        dist += math::abs(lss[i] - rss[i]);
     }
 
     return dist;
@@ -37,22 +37,22 @@ fn s2(Array<i32> *ls, Array<i32> *rs) {
     defer counts.free();
 
     for i32 i = 0; i < rs.len(); i += 1 {
-        i32 r = rs.elements[i];
+        i32 r = rs[i];
 
         while r >= counts.len() {
             counts.push(0);
         }
 
-        counts.elements[r] += 1;
+        counts[r] += 1;
     }
 
     i32 score = 0;
 
     for i32 i = 0; i < ls.len(); i += 1 {
-        i32 l = ls.elements[i];
+        i32 l = ls[i];
 
-        if ls.elements[i] < counts.len() {
-            score += l * counts.elements[l];
+        if ls[i] < counts.len() {
+            score += l * counts[l];
         }
     }
 

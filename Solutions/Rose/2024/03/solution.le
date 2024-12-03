@@ -8,15 +8,15 @@ fn s1(string contents) {
     i32 sum = 0;
 
     for i32 i = 0; i < parts.len(); i += 1 {
-        Array<string> *numbers = parts.elements[i].split(",");
+        Array<string> *numbers = parts[i].split(",");
 
         if numbers.len() > 1 {
             i32 left;
 
             string end = "";
-            i64 right = i64::strtol(numbers.elements[1], &end, 10);
+            i64 right = numbers[1].strtol(&end, 10);
 
-            if i32::try_parse(numbers.elements[0], &left) && end[0] == ')' {
+            if i32::try_parse(numbers[0], &left) && end[0] == ')' {
                 sum += left * right;
             }
         }
@@ -30,7 +30,7 @@ fn s2(string contents) {
     i32 sum = 0;
 
     for i32 i = 0; i < dos.len(); i += 1 {
-        string contents = dos.elements[i].split("don't()").elements[0];
+        string contents = dos[i].split("don't()")[0];
         sum += s1(contents);
     }
 
