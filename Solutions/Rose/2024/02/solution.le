@@ -1,6 +1,7 @@
 use std/collections/array;
 use std/split;
 use std/cast;
+use std/time;
 use std/io;
 
 fn is_safe(Array<i32> *r) {
@@ -39,14 +40,10 @@ fn is_safe2(Array<i32> *r) {
     }
 
     for i32 i = 0; i < r.len(); i += 1 {
-        Array<i32> *r2 = Array::with_capacity(r.len() - 1);
+        Array<i32> *r2 = r.clone();
         defer r2.free();
 
-        for i32 j = 0; j < r.len(); j += 1 {
-            if j != i {
-                r2.push(r.elements[j]);
-            }
-        }
+        r2.remove(i);
 
         if is_safe(r2) {
             return true;
@@ -66,6 +63,7 @@ fn solution(string d, bool p2) -> i32 {
         string l = lines.elements[i];
         Array<string> *parts = l.split(" ");
         Array<i32> *r = Array::with_capacity(parts.len());
+
         defer parts.free();
         defer r.free();
 
