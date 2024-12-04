@@ -1,5 +1,113 @@
+use std/collections/array;
+use std/collections/tuple;
+use std/split;
 use std/io;
 
+fn check_word(Array<string> *grid, string word, i32 x, i32 y, i32 dx, i32 dy) {
+    i32 rows = grid.len();
+    i32 cols = grid[0].len();
+
+    for i32 k = 0; k < word.len(); k += 1 {
+        i32 nx = x + k * dx;
+        i32 ny = y + k * dy;
+
+        if nx < 0 || nx >= rows || ny < 0 || ny >= cols || grid[nx][ny] != word[k] {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+fn pattern_exists(Array<void *> *pat, Array<char> *pattern) -> bool {
+    for i32 i = 0; i < pat.len(); i += 1 {
+        Array<string> *inner = pat[i];
+        bool matches = true;
+
+        for i32 j = 0; j < inner.len(); j += 1 {
+            if inner[j] != pattern[j] {
+                matches = false;
+                break;
+            }
+        }
+
+        if matches {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+fn check_pattern(Array<string> *grid, Array<void *> *pat, i32 x, i32 y) {
+    Array<char> *p1 = Array::new(grid[x][y], grid[x + 1][y + 1], grid[x + 2][y + 2]);
+    Array<char> *p2 = Array::new(grid[x][y + 2], grid[x + 1][y + 1], grid[x + 2][y]);
+    return pattern_exists(pat, p1) && pattern_exists(pat, p2);
+}
+
+fn s1(Array<string> *grid) {
+    i32 rows = grid.len();
+    i32 cols = grid[0].len();
+    i32 count = 0;
+
+    string word = "XMAS";
+    Array<void *> *dirs = Array::new(
+        Tuple::new(0, 1),
+        Tuple::new(0, -1),
+        Tuple::new(1, 0),
+        Tuple::new(-1, 0),
+        Tuple::new(1, 1),
+        Tuple::new(-1, -1),
+        Tuple::new(1, -1),
+        Tuple::new(-1, 1)
+    );
+
+    defer dirs.free();
+
+    for i32 r = 0; r < rows; r += 1 {
+        for i32 c = 0; c < cols; c += 1 {
+            for i32 d = 0; d < dirs.len(); d += 1 {
+                Tuple<i32, i32> *dir = dirs[d];
+
+                if check_word(grid, word, r, c, dir.x, dir.y) {
+                    count += 1;
+                }
+            }
+        }
+    }
+
+    return count;
+}
+
+fn s2(Array<string> *grid) {
+    i32 rows = grid.len();
+    i32 cols = grid[0].len();
+    i32 count = 0;
+
+    Array<void *> *pat = Array::new(
+        Array::new<string>("M", "A", "S"),
+        Array::new<string>("S", "A", "M"),
+    );
+
+    defer pat.free();
+
+    for i32 i = 0; i < rows - 2; i += 1 {
+        for i32 j = 0; j < cols - 2; j += 1 {
+            if check_pattern(grid, pat, i, j) {
+                count += 1;
+            }
+        }
+    }
+
+    return count;
+}
+
+
 fn main() {
-    io::eprintln("TODO");
+    string contents = io::read_to_string("input.txt");
+    Array<string> *grid = contents.split("\n");
+    defer grid.free();
+
+    io::dbg(s1(grid));
+    io::dbg(s2(grid));
 }
