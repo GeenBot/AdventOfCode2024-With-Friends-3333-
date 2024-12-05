@@ -25,6 +25,7 @@ fn reorder(Array<void *> *rs, Array<i32> *u) {
         for i32 i = 0; i < u.len() - 1; i += 1 {
             for i32 j = 0; j < rs.len(); j += 1 {
                 Array<i32> *r = rs[j];
+
                 if u[i] == r[0] && u[i + 1] == r[1] {
                     i32 temp = u[i];
                     u[i] = u[i + 1];
@@ -83,6 +84,8 @@ fn get_list(string list, string delimiter) {
 
     for i32 i = 0; i < parts.len(); i += 1 {
         Array<string> *inner = parts[i].split(delimiter);
+        defer inner.free();
+
         Array<i32> *numbers = Array::new();
 
         for i32 j = 0; j < inner.len(); j += 1 {
@@ -98,21 +101,16 @@ fn get_list(string list, string delimiter) {
 fn main() {
     string contents = io::read_to_string("input.txt");
     Array<string> *parts = contents.split("\n\n");
+    defer parts.free();
+
     string r_data = parts[0];
     string u_data = parts[1];
 
     Array<void *> *rs = get_list(r_data, "|");
     Array<void *> *us = get_list(u_data, ",");
 
-    // for i32 i = 0; i < rs.len(); i += 1 {
-    //     Array<i32> *r = rs[i];
-    //     io::dbg(r);
-    // }
-
-    // for i32 i = 0; i < us.len(); i += 1 {
-    //     Array<i32> *u = us[i];
-    //     io::dbg(u);
-    // }
+    defer rs.free();
+    defer us.free();
 
     io::dbg(s1(rs, us));
     io::dbg(s2(rs, us));
