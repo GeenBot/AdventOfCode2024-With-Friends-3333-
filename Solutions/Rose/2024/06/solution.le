@@ -1,0 +1,152 @@
+use std/collections/array;
+use std/collections/tuple;
+use std/split;
+use std/io;
+
+fn loop(i32 cx, i32 cy, i32 sx, i32 sy, Array<void *> *dirs, Array<string> *grid) {
+    Array<void *> *visited = Array::with_capacity(grid.len());
+    defer visited.free();
+
+    for i32 i = 0; i < grid.len(); i += 1 {
+        Array<void *> *row = Array::new();
+
+        for i32 j = 0; j < grid[i].len(); j += 1 {
+            row.push(Array::new<void *>());
+        }
+
+        visited.push(row);
+    }
+
+    i32 y = sy;
+    i32 x = sx;
+    i32 rows = grid.len();
+    i32 cols = grid[0].len();
+    i32 dir = 0;
+
+    while true {
+        Tuple<i32, i32> *tuple = dirs[dir];
+        i32 ny = y + tuple.x;
+        i32 nx = x + tuple.y;
+
+        if (ny < 0) || (ny >= rows) || (nx < 0) || (nx >= cols) {
+            return false;
+        }
+
+        if grid[ny][nx] == '#' || (ny == cy && nx == cx) {
+            dir = (dir + 1) % dirs.len();
+        } else {
+            y = ny;
+            x = nx;
+
+            Array<void *> *sets = visited[y];
+            Array<void *> *cell = sets[x];
+
+            for i32 i = 0; i < cell.len(); i += 1 {
+                Tuple<i32, i32> *existing = cell[i];
+                Tuple<i32, i32> *inner = dirs[dir];
+
+                if inner.x == existing.x && inner.y == existing.y {
+                    return true;
+                }
+            }
+
+            cell.push(dirs[dir]);
+            grid[y][x] = 'X';
+        }
+    }
+}
+
+fn s1(i32 *x, i32 *y, i32 *dir, Array<void *> *dirs, Array<string> *grid) {
+    i32 rows = grid.len(); i32 cols = grid[0].len();
+
+    while true {
+        Tuple<i32, i32> *inner = dirs[*dir];
+
+        if (*y + inner.x) < 0
+            || (*y + inner.x) >= rows
+            || (*x + inner.y) < 0
+            || (*x + inner.y) >= cols {
+            break;
+        }
+
+        if grid[*y + inner.x][*x + inner.y] == '#' {
+            *dir = (*dir + 1) % dirs.len();
+        } else {
+            inner = dirs[*dir];
+            *y += inner.x;
+            *x += inner.y;
+            grid[*y][*x] = 'X';
+        }
+    }
+
+    i32 sum = 0;
+
+    for i32 i = 0; i < grid.len(); i += 1 {
+        sum += grid[i].count('X');
+    }
+
+    return sum;
+}
+
+fn s2(Array<void *> *dirs, Array<string> *grid, i32 sx, i32 sy) {
+    i32 c = 0;
+
+    for i32 i = 0; i < grid.len(); i += 1 {
+        string row = grid[i];
+
+        for i32 j = 0; j < row.len(); j += 1 {
+            char col = row[j];
+
+            if i == sy && j == sx {
+                continue;
+            }
+
+            if col == 'X' && loop(j, i, sx, sy, dirs, grid) {
+                c += 1;
+            }
+        }
+    }
+
+    return c;
+}
+
+fn main(i32 argc, string *argv) {
+    if argc < 2 {
+        io::panic("Usage: {} input.txt", argv[0]);
+    }
+
+    Array<void *> *dirs = Array::new(
+        Tuple::new(-1, 0),
+        Tuple::new(0, 1),
+        Tuple::new(1, 0),
+        Tuple::new(0, -1),
+    );
+
+    defer dirs.free();
+
+    i32 x; i32 y; i32 sx; i32 sy; i32 dir;
+    string contents = io::read_to_string(argv[1]);
+    Array<string> *lines = contents.split("\n");
+    Array<string> *grid = Array::new();
+
+    defer lines.free();
+    defer grid.free();
+
+    for i32 i = 0; i < lines.len(); i += 1 {
+        if lines[i].contains("^") {
+            y = grid.len();
+            x = lines[i].find("^");
+
+            lines[i] = lines[i].replace("^", "X");
+            sy = y;
+            sx = x;
+        }
+
+        grid.push(lines[i]);
+    }
+
+    io::dbg(s1(&x, &y, &dir, dirs, grid));
+
+    // s1 MUST run for s2 to give the right answer
+    io::dbg(s2(dirs, grid, sx, sy));
+}
