@@ -13,10 +13,16 @@ for line in open(sys.argv[1]).readlines():
     grid.append([c for c in line])
 
 def loop(cx, cy):
-    visited = [[set() for _ in row] for row in grid]
+    visited = set()
     y, x, rows, cols, dir = sy, sx, len(grid), len(grid[0]), 0
 
     while True:
+        state = (y, x, dir)
+
+        if state in visited:
+            return True
+        visited.add(state)
+
         ny, nx = y + dirs[dir][0], x + dirs[dir][1]
 
         if not (0 <= ny < rows and 0 <= nx < cols):
@@ -26,12 +32,6 @@ def loop(cx, cy):
             dir = (dir + 1) % len(dirs)
         else:
             y, x = ny, nx
-
-            if dirs[dir] in visited[y][x]:
-                return True
-
-            visited[y][x].add(dirs[dir])
-            grid[y][x] = 'X'
 
 def s1():
     global x, y, dir
