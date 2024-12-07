@@ -85,8 +85,8 @@ fn solution(string d, bool p2) -> i32 {
     return c;
 }
 
-fn main() {
-    string input = io::read_to_string("input.txt");
+fn main(i32 argc, string *argv) {
+    string input = io::read_to_string(argv[1]);
     io::dbg(solution(input, false));
     io::dbg(solution(input, true));
 }

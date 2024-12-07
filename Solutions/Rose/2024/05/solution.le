@@ -98,8 +98,8 @@ fn get_list(string list, string delimiter) {
     return res;
 }
 
-fn main() {
-    string contents = io::read_to_string("input.txt");
+fn main(i32 argc, string *argv) {
+    string contents = io::read_to_string(argv[1]);
     Array<string> *parts = contents.split("\n\n");
     defer parts.free();
 

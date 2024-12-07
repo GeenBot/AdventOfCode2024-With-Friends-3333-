@@ -1,5 +1,92 @@
+use std/collections/array;
+use std/split;
+use std/cast;
 use std/io;
 
-fn main() {
-    io::eprintln("TODO");
+fn concat(i64 a, i64 b) -> i64 {
+    i64 multiplier = 1;
+
+    while b / multiplier > 0 {
+        multiplier *= 10;
+    }
+
+    return a * multiplier + b;
+}
+
+fn is_valid(i64 target, Array<i64> *numbers, Array<string> *operations, bool part2) -> bool {
+    Array<void *> *combinations = operations.product(numbers.len() - 1);
+    defer combinations.free();
+
+    Array<string> *combination;
+    i64 result;
+
+    for i32 j = 0; j < combinations.len(); j += 1 {
+        combination = combinations[j];
+        result = numbers[0];
+
+        for i32 i = 0; i < numbers.len() - 1; i += 1 {
+            if combination[i] == "+" {
+                result += numbers[i + 1];
+                continue;
+            }
+
+            if combination[i] == "*" {
+                result *= numbers[i + 1];
+                continue;
+            }
+
+            if part2 && combination[i] == "||" {
+                result = concat(result, numbers[i + 1]);
+                continue;
+            }
+        }
+
+        if result == target {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+fn solution(Array<string> *data, bool part2) {
+    Array<string> *operations = Array::new();
+    defer operations.free();
+
+    operations.push("+");
+    operations.push("*");
+    if part2 { operations.push("||"); }
+
+    i64 total = 0;
+
+    for i32 j = 0; j < data.len(); j += 1 {
+        Array<string> *parts = data[j].split(": ");
+        defer parts.free();
+
+        i64 target = i64::parse(parts[0]);
+        Array<string> *strings = parts[1].split(" ");
+        defer strings.free();
+
+        Array<i64> *numbers = Array::new();
+        defer numbers.free();
+
+        for i32 i = 0; i < strings.len(); i += 1 {
+            numbers.push(i64::parse(strings[i]));
+        }
+
+        if is_valid(target, numbers, operations, part2) {
+            total += target;
+        }
+    }
+
+    return total;
+}
+
+fn main(i32 argc, string *argv) {
+    string contents = io::read_to_string(argv[1]);
+    Array<string> *lines = contents.split("\n");
+    defer lines.free();
+
+    io::dbg(solution(lines, false));
+    io::dbg(solution(lines, true));
 }

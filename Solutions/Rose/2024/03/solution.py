@@ -1,3 +1,4 @@
+import sys
 import re
 
 def s1(contents):
@@ -35,7 +36,7 @@ def s2(contents):
 
     return s
 
-with open("input.txt", 'r') as f:
+with open(sys.argv[1]) as f:
     d = f.read()
     print(s1(d))
     print(s2(d))

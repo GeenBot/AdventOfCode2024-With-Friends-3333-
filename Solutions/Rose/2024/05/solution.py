@@ -1,4 +1,6 @@
-contents = open("input.txt").read()
+import sys
+
+contents = open(sys.argv[1]).read()
 rd, ud = contents.split('\n\n')
 rs = [tuple(map(int, r.split('|'))) for r in rd.splitlines()]
 us = [list(map(int, u.split(','))) for u in ud.splitlines()]

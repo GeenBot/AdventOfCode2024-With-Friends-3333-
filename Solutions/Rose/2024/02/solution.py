@@ -1,3 +1,5 @@
+import sys
+
 def is_safe(r):
     diff = [r[i + 1] - r[i] for i in range(len(r) - 1)]
 
@@ -27,7 +29,7 @@ def sol(d, p2):
 
     return c
 
-with open("input.txt", 'r') as f:
+with open(sys.argv[1]) as f:
     d = f.read()
     print(sol(d, False))
     print(sol(d, True))

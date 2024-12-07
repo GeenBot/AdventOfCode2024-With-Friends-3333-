@@ -37,8 +37,8 @@ fn s2(string contents) {
     return sum;
 }
 
-fn main() {
-    string contents = io::read_to_string("input.txt");
+fn main(i32 argc, string *argv) {
+    string contents = io::read_to_string(argv[1]);
     io::dbg(s1(contents));
     io::dbg(s2(contents));
 }

@@ -1,3 +1,5 @@
+import sys
+
 def s1(grid):
     rows, cols = len(grid), len(grid[0])
     word = "XMAS"
@@ -36,7 +38,7 @@ def s2(grid):
 
     return count
 
-with open('input.txt', 'r') as f:
+with open(sys.argv[1]) as f:
     grid = [list(l.strip()) for l in f.readlines()]
     print(s1(grid))
     print(s2(grid))

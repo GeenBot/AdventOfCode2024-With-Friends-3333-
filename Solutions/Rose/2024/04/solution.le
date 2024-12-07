@@ -103,8 +103,8 @@ fn s2(Array<string> *grid) {
 }
 
 
-fn main() {
-    string contents = io::read_to_string("input.txt");
+fn main(i32 argc, string *argv) {
+    string contents = io::read_to_string(argv[1]);
     Array<string> *grid = contents.split("\n");
     defer grid.free();
 

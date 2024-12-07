@@ -59,13 +59,13 @@ fn s2(Array<i32> *ls, Array<i32> *rs) {
     return score;
 }
 
-fn main() {
+fn main(i32 argc, string *argv) {
     Array<i32> *ls = Array::new();
     Array<i32> *rs = Array::new();
     defer ls.free();
     defer rs.free();
 
-    lists(ls, rs, io::read_to_string("input.txt"));
+    lists(ls, rs, io::read_to_string(argv[1]));
 
     io::dbg(s1(ls, rs));
     io::dbg(s2(ls, rs));

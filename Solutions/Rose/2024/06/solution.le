@@ -111,10 +111,6 @@ fn s2(Array<void *> *dirs, Array<string> *grid, i32 sx, i32 sy) {
 }
 
 fn main(i32 argc, string *argv) {
-    if argc < 2 {
-        io::panic("Usage: {} input.txt", argv[0]);
-    }
-
     Array<void *> *dirs = Array::new(
         Tuple::new(-1, 0),
         Tuple::new(0, 1),

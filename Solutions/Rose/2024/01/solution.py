@@ -1,3 +1,4 @@
+import sys
 from collections import Counter
 
 def lists(x):
@@ -12,8 +13,7 @@ def lists(x):
 
     return (ls, rs)
 
-name = "input.txt"
-ls, rs = lists(name)
+ls, rs = lists(sys.argv[1])
 
 def s1():
     lss = sorted(ls)
