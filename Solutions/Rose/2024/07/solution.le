@@ -14,7 +14,7 @@ fn concat(i64 a, i64 b) -> i64 {
 }
 
 fn is_valid(i64 target, Array<i64> *numbers, Array<string> *operations, bool part2) -> bool {
-    Array<void *> *combinations = operations.product(numbers.len() - 1);
+    Array<void *> *combinations = operations.cartesian_product(numbers.len() - 1);
     defer combinations.free();
 
     Array<string> *combination;
