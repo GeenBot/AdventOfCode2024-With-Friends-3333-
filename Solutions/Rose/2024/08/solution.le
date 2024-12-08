@@ -1,5 +1,109 @@
+use std/collections/array;
+use std/split;
 use std/io;
 
-fn main() {
-    io::eprintln("TODO");
+fn is_valid(i32 r, i32 c, i32 rows, i32 cols) {
+    return (r >= 0) && (r < rows) && (c >= 0) && (c < cols);
+}
+
+fn encode(i32 x, i32 y, i32 cols) -> i32 {
+    return y * cols + x;
+}
+
+fn get_coords(i32 rows, i32 cols, Array<string> *grid) {
+    Array<void *> *coords = Array::new();
+
+    for i32 row = 0; row < rows; row += 1 {
+        for i32 col = 0; col < cols; col += 1 {
+            char cell = grid[row][col];
+
+            if cell != '.' {
+                i32 encoded = encode(col, row, cols);
+
+                while coords.len() <= cell {
+                    coords.push(Array::new<i32>());
+                }
+
+                ((Array<i32> *)(coords[cell])).push(encoded);
+            }
+        }
+    }
+
+    return coords;
+}
+
+fn solution(i32 rows, i32 cols, Array<void *> *coords, bool part2) {
+    i32 dr; i32 dc; i32 nr; i32 nc;
+    Array<i32> *antinodes = Array::new();
+    defer antinodes.free();
+
+    for i32 i = 0; i < coords.len(); i += 1 {
+        Array<i32> *coord = coords[i];
+
+        if coord.is_empty() {
+            continue;
+        }
+
+        for i32 j = 0; j < coord.len(); j += 1 {
+            i32 x1 = coord[j] % cols;
+            i32 y1 = coord[j] / cols;
+
+            for i32 k = 0; k < coord.len(); k += 1 {
+                if coord[j] == coord[k] {
+                    continue;
+                }
+
+                i32 x2 = coord[k] % cols;
+                i32 y2 = coord[k] / cols;
+
+                dr = x1 - x2;
+                dc = y1 - y2;
+
+                if part2 {
+                    nr = x1;
+                    nc = y1;
+
+                    while is_valid(nr, nc, rows, cols) {
+                        i32 encoded = encode(nr, nc, cols);
+
+                        if !antinodes.contains(encoded) {
+                            antinodes.push(encoded);
+                        }
+
+                        nr += dr;
+                        nc += dc;
+                    }
+                } else {
+                    nr = x1 + dr;
+                    nc = y1 + dc;
+
+                    if is_valid(nr, nc, rows, cols) {
+                        i32 encoded = encode(nr, nc, cols);
+
+                        if !antinodes.contains(encoded) {
+                            antinodes.push(encoded);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    i32 length = antinodes.len();
+    return length;
+}
+
+fn main(i32 argc, string *argv) {
+    string contents = io::read_to_string(argv[1]);
+    Array<string> *grid = contents.split("\n");
+    defer grid.free();
+
+    i32 rows = grid.len();
+    i32 cols = grid[0].len();
+
+    Array<void *> *coords = get_coords(rows, cols, grid);
+    defer coords.free();
+
+    io::dbg(solution(rows, cols, coords, false));
+    io::dbg(solution(rows, cols, coords, true));
 }
