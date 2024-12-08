@@ -11,16 +11,18 @@ fn concat(i64 a, i64 b) -> i64 {
 }
 
 fn is_valid(i64 target, Array<i64> *numbers, bool part2) -> bool {
-    i64 combinations = math::pow(2 + part2, numbers.len() - 2);
-    i64 result; i64 combination; i64 operation;
+    i32 operations = 2 + part2;
+    i32 count = numbers.len() - 2;
+    i64 combinations = math::pow(operations, count);
+    i64 result; i32 combination; i32 operation;
 
     for i32 i = 0; i < combinations; i += 1 {
         result = numbers[1];
         combination = i;
 
-        for i32 j = 0; j < numbers.len() - 2; j += 1 {
-            operation = combination % (2 + part2);
-            combination /= (2 + part2);
+        for i32 j = 0; j < count; j += 1 {
+            operation = combination % operations;
+            combination /= operations;
 
             if operation == 0b00 {
                 result += numbers[j + 2];
@@ -50,10 +52,10 @@ fn is_valid(i64 target, Array<i64> *numbers, bool part2) -> bool {
     return false;
 }
 
-fn solution(Array<void *> *number_arrays, bool part2) -> i64 {
+fn solution(i32 length, Array<i64> **number_arrays, bool part2) -> i64 {
     i64 total = 0;
 
-    for i32 i = 0; i < number_arrays.len(); i += 1 {
+    for i32 i = 0; i < length; i += 1 {
         Array<i64> *numbers = number_arrays[i];
 
         if is_valid(numbers[0], numbers, part2) {
@@ -67,10 +69,8 @@ fn solution(Array<void *> *number_arrays, bool part2) -> i64 {
 fn main(i32 argc, string *argv) {
     string contents = io::read_to_string(argv[1]);
     Array<string> *lines = contents.split("\n");
+    Array<i64> *number_arrays[lines.len()];
     defer lines.free();
-
-    Array<void *> *number_arrays = Array::with_capacity(lines.len());
-    defer number_arrays.free();
 
     for i32 j = 0; j < lines.len(); j += 1 {
         Array<string> *parts = lines[j].split(": ");
@@ -86,9 +86,9 @@ fn main(i32 argc, string *argv) {
             numbers.push(i64::parse(strings[i]));
         }
 
-        number_arrays.push(numbers);
+        number_arrays[j] = numbers;
     }
 
-    io::dbg(solution(number_arrays, false));
-    io::dbg(solution(number_arrays, true));
+    io::dbg(solution(lines.len(), number_arrays, false));
+    io::dbg(solution(lines.len(), number_arrays, true));
 }
