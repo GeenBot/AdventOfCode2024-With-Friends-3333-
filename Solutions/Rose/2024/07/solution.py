@@ -5,7 +5,6 @@ def concat(a, b):
     if b < 10: return a * 10 + b
     if b < 100: return a * 100 + b
     if b < 1000: return a * 1000 + b
-    if b < 10000: return a * 10000 + b
 
 def match(t, ns, p2):
     n = len(ns) - 1

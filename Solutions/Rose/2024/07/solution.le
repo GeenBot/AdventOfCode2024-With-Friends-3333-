@@ -1,43 +1,44 @@
 use std/collections/array;
 use std/split;
 use std/cast;
+use std/math;
 use std/io;
 
 fn concat(i64 a, i64 b) -> i64 {
-    i64 multiplier = 1;
-
-    while b / multiplier > 0 {
-        multiplier *= 10;
-    }
-
-    return a * multiplier + b;
+    if b < 10 { return a * 10 + b; }
+    if b < 100 { return a * 100 + b; }
+    if b < 1000 { return a * 1000 + b; }
 }
 
-fn is_valid(i64 target, Array<i64> *numbers, Array<string> *operations, bool part2) -> bool {
-    Array<void *> *combinations = operations.cartesian_product(numbers.len() - 1);
-    defer combinations.free();
+fn is_valid(i64 target, Array<i64> *numbers, bool part2) -> bool {
+    i64 combinations = math::pow(2 + part2, numbers.len() - 1);
+    i64 result; i64 combination; i64 operation;
 
-    Array<string> *combination;
-    i64 result;
-
-    for i32 j = 0; j < combinations.len(); j += 1 {
-        combination = combinations[j];
+    for i32 i = 0; i < combinations; i += 1 {
         result = numbers[0];
+        combination = i;
 
-        for i32 i = 0; i < numbers.len() - 1; i += 1 {
-            if combination[i] == "+" {
-                result += numbers[i + 1];
+        for i32 j = 0; j < numbers.len() - 1; j += 1 {
+            operation = combination % (2 + part2);
+            combination /= (2 + part2);
+
+            if operation == 0b00 {
+                result += numbers[j + 1];
                 continue;
             }
 
-            if combination[i] == "*" {
-                result *= numbers[i + 1];
+            if operation == 0b01 {
+                result *= numbers[j + 1];
                 continue;
             }
 
-            if part2 && combination[i] == "||" {
-                result = concat(result, numbers[i + 1]);
+            if part2 && operation == 0b10 {
+                result = concat(result, numbers[j + 1]);
                 continue;
+            }
+
+            if result > target {
+                break;
             }
         }
 
@@ -49,14 +50,7 @@ fn is_valid(i64 target, Array<i64> *numbers, Array<string> *operations, bool par
     return false;
 }
 
-fn solution(Array<string> *data, bool part2) {
-    Array<string> *operations = Array::new();
-    defer operations.free();
-
-    operations.push("+");
-    operations.push("*");
-    if part2 { operations.push("||"); }
-
+fn solution(Array<string> *data, bool part2) -> i64 {
     i64 total = 0;
 
     for i32 j = 0; j < data.len(); j += 1 {
@@ -74,7 +68,7 @@ fn solution(Array<string> *data, bool part2) {
             numbers.push(i64::parse(strings[i]));
         }
 
-        if is_valid(target, numbers, operations, part2) {
+        if is_valid(target, numbers, part2) {
             total += target;
         }
     }
