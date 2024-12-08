@@ -21,7 +21,7 @@ py: $(DAY)/solution.py
 	@python3 $(DAY)/solution.py $(DAY)/$(INPUT)
 
 time:
-	hyperfine --warmup 3 'make solution' 'make py'
+	hyperfine --warmup 3 './$(DAY)/solution ./$(DAY)/input.txt' 'make py INPUT=input.txt'
 
 .PHONY: clean
 clean:
