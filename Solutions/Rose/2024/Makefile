@@ -18,10 +18,10 @@ $(DAY)/solution: $(DAY)/solution.le
 	@ellec $(DAY)/solution.le -o $(DAY)/solution -z -O3
 
 py: $(DAY)/solution.py
-	@python3 $(DAY)/solution.py $(DAY)/$(INPUT)
+	@pypy3 $(DAY)/solution.py $(DAY)/$(INPUT)
 
 time:
-	hyperfine --warmup 3 './$(DAY)/solution ./$(DAY)/input.txt' 'python3 $(DAY)/solution.py ./$(DAY)/input.txt'
+	hyperfine --warmup 3 './$(DAY)/solution ./$(DAY)/input.txt' 'pypy3 $(DAY)/solution.py ./$(DAY)/input.txt'
 
 .PHONY: clean
 clean:
