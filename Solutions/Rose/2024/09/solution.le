@@ -1,5 +1,156 @@
+use std/collections/array;
+use std/collections/hashset;
 use std/io;
 
-fn main() {
-    io::eprintln("TODO");
+fn checksum(Array<i64> *bls) {
+    i64 sum = 0;
+
+    for i32 i = 0; i < bls.len(); i += 1 {
+        if bls[i] != -1 {
+            sum += i * bls[i];
+        }
+    }
+
+    return sum;
+}
+
+fn s1(Array<i32> *ns) {
+    Array<i64> *bls = Array::new();
+    i64 id = 0;
+
+    for i32 i = 0; i < ns.len(); i += 2 {
+        i64 n = ns[i];
+        for i32 j = 0; j < n; j += 1 {
+            bls.push(id);
+        }
+        id += 1;
+
+        if i + 1 < ns.len() {
+            for i32 j = 0; j < ns[i + 1]; j += 1 {
+                bls.push(-1);
+            }
+        }
+    }
+
+    Array<i32> *e = Array::new();
+    for i32 i = 0; i < bls.len(); i += 1 {
+        if bls[i] == -1 {
+            e.push(i);
+        }
+    }
+
+    i32 lne = bls.len() - 1;
+    for i32 k = 0; k < e.len(); k += 1 {
+        i32 spos = e[k];
+        while lne > spos && bls[lne] == -1 {
+            lne -= 1;
+        }
+
+        if lne <= spos {
+            break;
+        }
+
+        bls[spos] = bls[lne];
+        bls[lne] = -1;
+
+        lne -= 1;
+    }
+
+    return checksum(bls);
+}
+
+fn s2(Array<i32> *ns) {
+    HashSet<i64> *ids = HashSet::new();
+    Array<i64> *bls = Array::new();
+    Array<i64> *szs = Array::new();
+    Array<i32> *fs = Array::new();
+    Array<i32> *fl = Array::new();
+    i64 id = 0;
+
+    for i32 i = 0; i < ns.len(); i += 2 {
+        i64 n = ns[i];
+        szs.push(n);
+        ids.add(id);
+
+        for i32 j = 0; j < n; j += 1 {
+            bls.push(id);
+        }
+
+        id += 1;
+
+        if i + 1 < ns.len() {
+            i32 start = bls.len();
+
+            for i32 j = 0; j < ns[i + 1]; j += 1 {
+                bls.push(-1);
+            }
+
+            fs.push(start);
+            fl.push(ns[i + 1]);
+        }
+    }
+
+    for i64 id = szs.len() - 1; id >= 0; id -= 1 {
+        if !ids.contains(id) {
+            continue;
+        }
+
+        i64 sz = szs[id];
+        i32 start = -1;
+
+        for i32 i = 0; i < bls.len(); i += 1 {
+            if bls[i] == id {
+                start = i;
+                break;
+            }
+        }
+
+        i32 bpos = -1;
+
+        for i32 j = 0; j < fs.len(); j += 1 {
+            if fl[j] >= sz {
+                bpos = fs[j];
+                fs[j] += sz;
+                fl[j] -= sz;
+
+                if fl[j] == 0 {
+                    fs.remove(j);
+                    fl.remove(j);
+                }
+
+                break;
+            }
+        }
+
+        if (bpos != -1) && (bpos < start) {
+            for i32 i = start; i < start + sz; i += 1 {
+                bls[i] = -1;
+            }
+
+            fs.push(start);
+            fl.push(sz);
+
+            for i32 i = bpos; i < bpos + sz; i += 1 {
+                bls[i] = id;
+            }
+        }
+
+        ids.remove(id);
+    }
+
+    return checksum(bls);
+}
+
+
+fn main(i32 argc, string *argv) {
+    string contents = io::read_to_string(argv[1]);
+    Array<i32> *ns = Array::new();
+    defer ns.free();
+
+    for i32 i = 0; i < contents.len(); i += 1 {
+        ns.push(contents[i] - '0');
+    }
+
+    io::dbg(s1(ns));
+    io::dbg(s2(ns));
 }
