@@ -1,5 +1,96 @@
+use std/collections/array;
+use std/collections/hashset;
+use std/split;
+use std/cast;
 use std/io;
 
-fn main() {
-    io::eprintln("TODO");
+use util;
+
+fn find(Array<void *> *map, i32 rows, i32 cols) {
+    Array<i32 *> *ts = Array::new();
+
+    for i32 row = 0; row < rows; row += 1 {
+        for i32 col = 0; col < cols; col += 1 {
+            if ((Array<i32> *)(map[row]))[col] == 0 {
+                ts.push(tuple(row, col));
+            }
+        }
+    }
+
+    return ts;
+}
+
+fn search(Array<void *> *map, i32 *start, i32 rows, i32 cols, bool part2) -> i32 {
+    Array<i32 *> *stack = Array::new(start);
+    HashSet<i32> *set = HashSet::new();
+    i32 c = 0;
+
+    while !stack.is_empty() {
+        i32 *inner = stack.pop();
+        i32 x = inner[0];
+        i32 y = inner[1];
+
+        if !part2 {
+            i32 encoded = encode2(x, y);
+
+            if set.contains(encoded) {
+                continue;
+            }
+
+            set.add(encoded);
+        }
+
+        if ((Array<i32> *)map[x])[y] == 9 {
+            c += 1;
+        }
+
+        for i32 i = 0; i < #len(dir4); i += 1 {
+            i32 nx = x + dir4[i][0];
+            i32 ny = y + dir4[i][1];
+
+            if nx >= 0 && nx < rows && ny >= 0 && ny < cols {
+                if ((Array<i32> *)(map[nx]))[ny] == ((Array<i32> *)(map[x]))[y] + 1 {
+                    stack.push(tuple(nx, ny));
+                }
+            }
+        }
+    }
+
+    return c;
+}
+
+fn solution(Array<void *> *map, Array<i32 *> *ts, i32 rows, i32 cols, bool part2) -> i32 {
+    i32 c = 0;
+
+    for i32 i = 0; i < ts.len(); i += 1 {
+        c += search(map, ts[i], rows, cols, part2);
+    }
+
+    return c;
+}
+
+fn main(i32 argc, string *argv) {
+    string contents = io::read_to_string(argv[1]);
+    Array<string> *lines = contents.split("\n");
+    Array<void *> *map = Array::new();
+
+    defer lines.free();
+    defer map.free();
+
+    for i32 i = 0; i < lines.len(); i += 1 {
+        Array<i32> *inner = Array::new();
+
+        for i32 j = 0; j < lines[i].len(); j += 1 {
+            inner.push(lines[i][j] - '0');
+        }
+
+        map.push(inner);
+    }
+
+    i32 rows = map.len();
+    i32 cols = ((Array<i32> *)map[0]).len();
+
+    Array<i32 *> *ts = find(map, rows, cols);
+    io::dbg(solution(map, ts, rows, cols, false));
+    io::dbg(solution(map, ts, rows, cols, true));
 }

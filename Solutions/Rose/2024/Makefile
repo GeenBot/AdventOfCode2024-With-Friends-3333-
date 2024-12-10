@@ -8,7 +8,6 @@ all:
 	@$(foreach file, $(shell find . -mindepth 1 -type d -exec basename {} \; | sort -n), \
 		echo "Day $(file)"; \
 	    make $(KIND) DAY=$(file); \
-		echo; \
 	)
 
 elle: $(DAY)/solution

@@ -3,20 +3,9 @@ use std/collections/array;
 use std/split;
 use std/io;
 
-fn encode(i32 a, i32 b, i32 c) {
-    return ((a + 512) << 10) | ((b + 128) << 2) | c;
-}
+use util;
 
-fn tuple<T>(T x, T y) {
-    T *res = malloc(2 * #size(T));
-
-    res[0] = x;
-    res[1] = y;
-
-    return res;
-}
-
-fn loop(i32 cx, i32 cy, i32 sx, i32 sy, i32 **dirs, HashSet<i32> *visited, i32 rows, i32 cols, string *grid) {
+fn loop(i32 cx, i32 cy, i32 sx, i32 sy, HashSet<i32> *visited, i32 rows, i32 cols, string *grid) {
     visited.clear();
 
     i32 y = sy;
@@ -24,8 +13,8 @@ fn loop(i32 cx, i32 cy, i32 sx, i32 sy, i32 **dirs, HashSet<i32> *visited, i32 r
     i32 dir = 0;
 
     while true {
-        i32 encoded = encode(x, y, dir);
-        i32 *tuple = dirs[dir];
+        i32 encoded = encode3(x, y, dir);
+        i32 *tuple = dir4[dir];
         i32 ny = y + tuple[0];
         i32 nx = x + tuple[1];
 
@@ -34,7 +23,7 @@ fn loop(i32 cx, i32 cy, i32 sx, i32 sy, i32 **dirs, HashSet<i32> *visited, i32 r
         }
 
         if grid[ny][nx] == '#' || (ny == cy && nx == cx) {
-            dir = (dir + 1) % #len(dirs);
+            dir = (dir + 1) % #len(dir4);
         } else {
             y = ny;
             x = nx;
@@ -48,11 +37,11 @@ fn loop(i32 cx, i32 cy, i32 sx, i32 sy, i32 **dirs, HashSet<i32> *visited, i32 r
     }
 }
 
-fn s1(i32 *x, i32 *y, i32 *dir, i32 **dirs, i32 rows, i32 cols, string *grid) {
+fn s1(i32 *x, i32 *y, i32 *dir, i32 rows, i32 cols, string *grid) {
     i32 count = 1; // Stating position is an X
 
     while true {
-        i32 *inner = dirs[*dir];
+        i32 *inner = dir4[*dir];
         i32 dx = inner[0];
         i32 dy = inner[1];
         i32 ny = *y + dx;
@@ -63,7 +52,7 @@ fn s1(i32 *x, i32 *y, i32 *dir, i32 **dirs, i32 rows, i32 cols, string *grid) {
         }
 
         if grid[ny][nx] == '#' {
-            *dir = (*dir + 1) % #len(dirs);
+            *dir = (*dir + 1) % #len(dir4);
         } else {
             *y += dx;
             *x += dy;
@@ -79,7 +68,7 @@ fn s1(i32 *x, i32 *y, i32 *dir, i32 **dirs, i32 rows, i32 cols, string *grid) {
     return count;
 }
 
-fn s2(i32 sx, i32 sy, i32 **dirs, i32 rows, i32 cols, string *grid) {
+fn s2(i32 sx, i32 sy, i32 rows, i32 cols, string *grid) {
     HashSet<i32> *visited = HashSet::with_capacity(rows * cols);
     i32 c = 0;
 
@@ -93,7 +82,7 @@ fn s2(i32 sx, i32 sy, i32 **dirs, i32 rows, i32 cols, string *grid) {
                 continue;
             }
 
-            if col == 'X' && loop(j, i, sx, sy, dirs, visited, rows, cols, grid) {
+            if col == 'X' && loop(j, i, sx, sy, visited, rows, cols, grid) {
                 c += 1;
             }
         }
@@ -103,13 +92,6 @@ fn s2(i32 sx, i32 sy, i32 **dirs, i32 rows, i32 cols, string *grid) {
 }
 
 fn main(i32 argc, string *argv) {
-    i32 **dirs = [
-        tuple(-1, 0),
-        tuple(0, 1),
-        tuple(1, 0),
-        tuple(0, -1),
-    ];
-
     i32 x; i32 y; i32 sx; i32 sy; i32 dir;
     string contents = io::read_to_string(argv[1]);
     Array<string> *lines = contents.split("\n");
@@ -135,6 +117,6 @@ fn main(i32 argc, string *argv) {
     i32 cols = grid[0].len();
 
     // s1 MUST run for s2 to give the right answer
-    io::dbg(s1(&x, &y, &dir, dirs, rows, cols, grid.elements));
-    io::dbg(s2(sx, sy, dirs, rows, cols, grid.elements));
+    io::dbg(s1(&x, &y, &dir, rows, cols, grid.elements));
+    io::dbg(s2(sx, sy, rows, cols, grid.elements));
 }

@@ -1,0 +1,44 @@
+global pub;
+
+fn encode2(i32 a, i32 b) {
+    return ((a + 512) << 10) | ((b + 128) << 2);
+}
+
+fn encode3(i32 a, i32 b, i32 c) {
+    return ((a + 512) << 10) | ((b + 128) << 2) | c;
+}
+
+fn decode2(i32 encoded) {
+    i32 *res = malloc(2 * #size(i32));
+
+    res[0] = (encoded >> 10) - 512;
+    res[1] = (encoded >> 2 & 0xFF) - 128;
+
+    return res;
+}
+
+fn decode2(i32 encoded) {
+    i32 *res = malloc(3 * #size(i32));
+
+    res[0] = (encoded >> 10) - 512;
+    res[1] = (encoded >> 2 & 0xFF) - 128;
+    res[2] = encoded & 0x03;
+
+    return res;
+}
+
+fn tuple<T>(T x, T y) {
+    T *res = malloc(2 * #size(T));
+
+    res[0] = x;
+    res[1] = y;
+
+    return res;
+}
+
+const i32 **dir4 = [
+    tuple(-1, 0),
+    tuple(0, 1),
+    tuple(1, 0),
+    tuple(0, -1),
+];
