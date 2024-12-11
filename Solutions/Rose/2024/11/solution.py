@@ -22,7 +22,6 @@ def sol(sc):
 
     for s, c in sc.items():
         for ns in blink(s):
-            print(ns)
             nsc[ns] += c
 
     return nsc
