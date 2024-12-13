@@ -1,5 +1,31 @@
 global pub;
 
+fn extract_numbers(string input) {
+    Array<i64> *numbers = Array::new();
+    string current = "";
+    bool hit = false;
+
+    for i32 i = 0; i < input.len(); i += 1 {
+        if input[i].is_digit() {
+            current.push(input[i]);
+            hit = true;
+            continue;
+        }
+
+        if hit {
+            numbers.push(i64::parse(current));
+            current = "";
+            hit = false;
+        }
+    }
+
+    if !current.is_empty() {
+        numbers.push(i64::parse(current));
+    }
+
+    return numbers;
+}
+
 fn encode2(i32 a, i32 b) {
     return ((a + 512) << 10) | ((b + 128) << 2);
 }
@@ -37,8 +63,8 @@ fn tuple<T>(T x, T y) {
 }
 
 const i32 **dir4 = [
-    tuple(-1, 0),
-    tuple(0, 1),
-    tuple(1, 0),
-    tuple(0, -1),
+    [-1, 0],
+    [0, 1],
+    [1, 0],
+    [0, -1],
 ];

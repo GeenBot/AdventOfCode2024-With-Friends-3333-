@@ -1,5 +1,99 @@
+use std/collections/hashmap;
+use std/collections/array;
+use std/split;
+use std/cast;
 use std/io;
 
-fn main() {
-    io::eprintln("TODO");
+fn HashMap::sum<T, U>(HashMap<T, U> *self) {
+    Array<T> *keys = self.keys();
+    i64 sum = 0;
+
+    defer keys.free();
+
+    for i32 i = 0; i < keys.len(); i += 1 {
+        sum += self.get(keys[i]);
+    }
+
+    return sum;
+}
+
+fn blink(i64 s) -> Array<i64> * {
+    Array<i64> *result = Array::new();
+
+    if s == 0 {
+        result.push(1);
+        return result;
+    }
+
+    string ss = "{}".format(s);
+    i32 l = ss.len();
+    i32 hl = l / 2;
+
+    if l % 2 == 0 {
+        result.push(i64::parse(ss.slice(0, hl)));
+        result.push(i64::parse(ss.slice(hl, l)));
+    } else {
+        result.push(2024 * s);
+    }
+
+    return result;
+}
+
+fn sol(HashMap<i64, i64> *sc) -> HashMap<i64, i64> * {
+    HashMap<i64, i64> *nsc = HashMap::new();
+    Array<i64> *keys = sc.keys();
+
+    for i32 i = 0; i < keys.len(); i += 1 {
+        i64 s = keys[i];
+        i64 c = sc[s];
+
+        Array<i64> *ns = blink(s);
+
+        for i32 j = 0; j < ns.len(); j += 1 {
+            i64 ns_value = ns[j];
+
+            if !nsc.contains_key(ns_value) {
+                nsc[ns_value] = 0;
+            }
+
+            nsc[ns_value] += c;
+        }
+    }
+
+    return nsc;
+}
+
+fn main(i32 argc, string *argv) {
+    string contents = io::read_to_string(argv[1]);
+    Array<string> *tokens = contents.split(" ");
+    Array<i64> *ss = Array::new();
+    HashMap<i64, i64> *sc = HashMap::new();
+
+    defer tokens.free();
+    defer ss.free();
+    defer sc.free();
+
+    for i32 i = 0; i < tokens.len(); i += 1 {
+        ss.push(i64::parse(tokens[i]));
+    }
+
+    for i32 i = 0; i < ss.len(); i += 1 {
+        i64 s = ss[i];
+
+        if !sc.contains_key(s) {
+            sc[s] = 0;
+        }
+
+        sc[s] += 1;
+    }
+
+    for i32 i = 0; i < 75; i += 1 {
+        if i == 25 {
+            io::dbg(sc.sum());
+        }
+
+        sc = sol(sc);
+    }
+
+    io::dbg(sc.sum());
 }

@@ -34,7 +34,7 @@ def sol(c, o):
         if d3 // by != d3 / by:
             continue
 
-        n = (py - ay * m) // by
+        n = d3 // by
         c += 3 * m + n
     return c
 
