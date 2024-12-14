@@ -30,9 +30,9 @@ fn parse(string contents, i64 offset) {
     for i32 i = 0; i < parts.len(); i += 1 {
         Array<string> *inner = parts[i].split("\n");
         Machine *machine = Machine::new(
-            extract_numbers(inner[0]),
-            extract_numbers(inner[1]),
-            extract_numbers(inner[2])
+            inner[0].nums(),
+            inner[1].nums(),
+            inner[2].nums()
         );
 
         machine.p[0] += offset;

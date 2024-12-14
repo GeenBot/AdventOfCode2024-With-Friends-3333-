@@ -13,7 +13,7 @@ all:
 elle: $(DAY)/solution
 	@./$(DAY)/solution $(DAY)/$(INPUT)
 
-$(DAY)/solution: $(DAY)/solution.le
+$(DAY)/solution: $(DAY)/solution.le util.le
 	@ellec $(DAY)/solution.le -o $(DAY)/solution -z -O3
 
 py: $(DAY)/solution.py

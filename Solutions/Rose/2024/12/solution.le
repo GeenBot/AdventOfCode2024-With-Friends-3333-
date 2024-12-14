@@ -13,12 +13,12 @@ fn dfs(Array<string> *grid, HashSet<i32> *v, i32 r, i32 c, i32 p) {
 
     while !stack.is_empty() {
         i32 encoded = stack.pop();
-        i32 *decoded = decode2(encoded);
+        i32 *decoded = decode2<i32>(encoded);
         i32 x = decoded[0];
         i32 y = decoded[1];
 
         if (v.contains(encoded)) || (x < 0) || (x >= grid.len())
-            || (y < 0) || (y >= grid[0].len()) || grid[x][y] != p {
+            || (y < 0) || (y >= grid[0].len()) || (grid[x][y] != p) {
             continue;
         }
 
@@ -47,9 +47,8 @@ fn solution(Array<string> *grid, bool part2) {
 
     for i32 r = 0; r < grid.len(); r += 1 {
         for i32 c = 0; c < grid[0].len(); c += 1 {
-            if !v.contains(encode2(r, c)) {
+            if !v.contains(encode2<i32>(r, c)) {
                 HashSet<i32> *area = dfs(grid, v, r, c, grid[r][c]);
-                io::dbg(area);
 
                 if !rs.contains_key(grid[r][c]) {
                     rs[grid[r][c]] = Array::new<void *>();
@@ -60,69 +59,71 @@ fn solution(Array<string> *grid, bool part2) {
         }
     }
 
-    // Array<Array<Set<i32>>>
-    Array<void *> *values = rs.values();
+    Array<i32> *keys = rs.keys();
 
-    for i32 i = 0; i < values.len(); i += 1 {
-        io::dbg(values[i]);
-        Array<void *> *areas = values[i];
+    for i32 i = 0; i < keys.len(); i += 1 {
+        i32 key = keys[i];
+        Array<void *> *value = rs[key];
 
-        // for i32 j = 0; j < areas.len(); j += 1 {
-        //     HashSet<i32> *area = areas[j];
-        //     i32 bc = 0;
-        //     i32 sc = 0;
+        for i32 j = 0; j < value.len(); j += 1 {
+            HashSet<i32> *set = value[j];
+            Array<i32> *area = set.values();
 
-        //     for i32 k = 0; k < area.size(); k += 1 {
-        //         i32 *p = decode2(area.table[k]);
-        //         i32 **nds = [
-        //             [p[0] + dir4[0][0], p[1] + dir4[0][1]],
-        //             [p[0] + dir4[1][0], p[1] + dir4[1][1]],
-        //             [p[0] + dir4[2][0], p[1] + dir4[2][1]],
-        //             [p[0] + dir4[3][0], p[1] + dir4[3][1]],
-        //         ];
+            i32 bc = 0;
+            i32 sc = 0;
 
-        //         for i32 l = 0; l < #len(nds); l += 1 {
-        //             i32 *d = nds[l];
-        //             if !area.contains(encode2(d[0], d[1])) {
-        //                 bc += 1;
-        //             }
-        //         }
-        //     }
+            for i32 k = 0; k < area.len(); k += 1 {
+                i32 *p = decode2(area[k]);
+                i32 **nds = [
+                    [p[0] + dir4[0][0], p[1] + dir4[0][1]],
+                    [p[0] + dir4[1][0], p[1] + dir4[1][1]],
+                    [p[0] + dir4[2][0], p[1] + dir4[2][1]],
+                    [p[0] + dir4[3][0], p[1] + dir4[3][1]],
+                ];
 
-        //     for i32 k = 0; k < #len(dir4); k += 1 {
-        //         i32 *d = dir4[k];
+                for i32 l = 0; l < #len(nds); l += 1 {
+                    i32 *d = nds[l];
+                    if !area.contains(encode2(d[0], d[1])) {
+                        bc += 1;
+                    }
+                }
+            }
 
-        //         HashSet<i32> *s = HashSet::new();
-        //         for i32 l = 0; l < area.size(); l += 1 {
-        //             i32 *p = decode2(area.table[l]);
-        //             i32 encoded = encode2(p[0] + d[0], p[1] + d[1]);
+            for i32 k = 0; k < #len(dir4); k += 1 {
+                i32 *d = dir4[k];
 
-        //             if !area.contains(encoded) {
-        //                 s.add(encoded);
-        //             }
-        //         }
+                HashSet<i32> *s = HashSet::new();
+                for i32 l = 0; l < area.len(); l += 1 {
+                    i32 *p = decode2<i32>(area[l]);
+                    i32 encoded = encode2<i32>(p[0] + d[0], p[1] + d[1]);
 
-        //         HashSet<i32> *sr = HashSet::new();
-        //         for i32 l = 0; l < s.size(); l += 1 {
-        //             i32 *p = decode2(s.table[l]);
-        //             i32 encoded = encode2(p[0] + d[0], p[1] + d[1]);
+                    if !area.contains(encoded) {
+                        s.add(encoded);
+                    }
+                }
 
-        //             while s.contains(encoded) {
-        //                 sr.add(encoded);
-        //                 i32 *decoded = decode2(encoded);
-        //                 encoded = encode2(decoded[0] + d[1], decoded[1] + d[0]);
-        //             }
-        //         }
+                HashSet<i32> *sr = HashSet::new();
+                Array<i32> *sv = s.values();
+                for i32 l = 0; l < sv.len(); l += 1 {
+                    i32 *p = decode2<i32>(sv[l]);
+                    i32 x = encode2<i32>(p[0] + d[1], p[1] + d[0]);
 
-        //         sc += s.size() - sr.size();
-        //     }
+                    while sv.contains(x) {
+                        sr.add(x);
+                        i32 *de = decode2<i32>(x);
+                        x = encode2<i32>(de[0] + d[1], de[1] + d[0]);
+                    }
+                }
 
-        //     if part2 {
-        //         res += area.size() * sc;
-        //     } else {
-        //         res += area.size() * bc;
-        //     }
-        // }
+                sc += s.size() - sr.size();
+            }
+
+            if part2 {
+                res += area.len() * sc;
+            } else {
+                res += area.len() * bc;
+            }
+        }
     }
 
     return res;
@@ -132,4 +133,5 @@ fn main(i32 argc, string *argv) {
     string contents = io::read_to_string(argv[1]);
     Array<string> *grid = contents.split("\n");
     io::dbg(solution(grid, false));
+    io::dbg(solution(grid, true));
 }

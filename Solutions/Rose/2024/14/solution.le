@@ -1,5 +1,120 @@
+use std/collections/array;
 use std/io;
+use std/split;
+use std/cast;
 
-fn main() {
-    io::eprintln("TODO");
+use util;
+
+const i64 rows = 101;
+const i64 cols = 103;
+
+struct Robot {
+    Array<i64> *p;
+    Array<i64> *v;
+};
+
+fn Robot::new(Array<i64> *p, Array<i64> *v) {
+    Robot *robot = malloc(#size(Robot));
+    *robot = malloc(#size(Robot));
+
+    robot.p = p;
+    robot.v = v;
+
+    return robot;
+}
+
+fn parse(Array<string> *c) {
+    Array<Robot *> *robots = Array::new();
+
+    for i32 i = 0; i < c.len(); i += 1 {
+        string line = c[i];
+
+        Array<string> *parts = line.split(" ");
+        Array<i64> *p = parts[0].nums();
+        Array<i64> *v = parts[1].nums();
+
+        robots.push(Robot::new(p, v));
+    }
+
+    return robots;
+}
+
+fn quad(i64 nx, i64 ny, Array<i32> *ans) {
+    if (nx == rows / 2) || (ny == cols / 2) {
+        return;
+    }
+
+    if (nx < rows / 2) && (ny < cols / 2) {
+        ans[0] += 1;
+        return;
+    }
+
+    if (nx > rows / 2) && (ny < cols / 2) {
+        ans[1] += 1;
+        return;
+    }
+
+    if (nx < rows / 2) && (ny > cols / 2) {
+        ans[2] += 1;
+        return;
+    }
+
+    ans[3] += 1;
+}
+
+fn sol(Array<Robot *> *robots) {
+    i32 s = 0;
+    Array<i32> *ans = Array::new(0, 0, 0, 0);
+    i32 i; i32 j; bool inv; i64 nx; i64 ny;
+    Array<void *> *grid; Array<i32> *row;
+
+    while true {
+        grid = Array::new();
+        defer grid.free();
+
+        for i = 0; i < cols; i += 1 {
+            row = Array::new();
+
+            for j = 0; j < rows; j += 1 {
+                row.push(0);
+            }
+
+            grid.push(row);
+        }
+
+        s += 1;
+        inv = false;
+
+        for i = 0; i < robots.len(); i += 1 {
+            nx = (robots[i].p[0] + s * robots[i].v[0]).mod(rows);
+            ny = (robots[i].p[1] + s * robots[i].v[1]).mod(cols);
+
+            if s == 100 {
+                quad(nx, ny, ans);
+            }
+
+            ((Array<i32> *)(grid[ny]))[nx] += 1;
+
+            if ((Array<i32> *)(grid[ny]))[nx] > 1 {
+                inv = true;
+            }
+        }
+
+        if s == 100 {
+            io::dbg(ans[0] * ans[1] * ans[2] * ans[3]);
+        }
+
+        if !inv {
+            break;
+        }
+    }
+
+    return s;
+}
+
+fn main(i32 argc, string *argv) {
+    string contents = io::read_to_string(argv[1]);
+    Array<string> *lines = contents.split("\n");
+    Array<Robot *> *robots = parse(lines);
+    io::dbg(sol(robots));
 }
