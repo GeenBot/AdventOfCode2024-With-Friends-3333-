@@ -1,3 +1,4 @@
+use std/types;
 global pub;
 
 fn extract_numbers(string input) {

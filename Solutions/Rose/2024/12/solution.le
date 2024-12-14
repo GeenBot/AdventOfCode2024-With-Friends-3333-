@@ -1,5 +1,135 @@
+use std/collections/hashmap;
+use std/collections/hashset;
+use std/collections/array;
+use std/split;
+use std/cast;
 use std/io;
 
-fn main() {
-    io::eprintln("TODO");
+use util;
+
+fn dfs(Array<string> *grid, HashSet<i32> *v, i32 r, i32 c, i32 p) {
+    HashSet<i32> *a = HashSet::new();
+    Array<i32> *stack = Array::new(encode2(r, c));
+
+    while !stack.is_empty() {
+        i32 encoded = stack.pop();
+        i32 *decoded = decode2(encoded);
+        i32 x = decoded[0];
+        i32 y = decoded[1];
+
+        if (v.contains(encoded)) || (x < 0) || (x >= grid.len())
+            || (y < 0) || (y >= grid[0].len()) || grid[x][y] != p {
+            continue;
+        }
+
+        v.add(encoded);
+        a.add(encoded);
+
+        i32 **ds = [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]];
+        for i32 n = 0; n < #len(ds); n += 1 {
+            i32 nx = ds[n][0];
+            i32 ny = ds[n][1];
+            i32 encoded = encode2(nx, ny);
+
+            if !v.contains(encoded) {
+                stack.push(encoded);
+            }
+        }
+    }
+
+    return a;
+}
+
+fn solution(Array<string> *grid, bool part2) {
+    i32 res = 0;
+    HashMap<i32, void *> *rs = HashMap::new();
+    HashSet<i32> *v = HashSet::new();
+
+    for i32 r = 0; r < grid.len(); r += 1 {
+        for i32 c = 0; c < grid[0].len(); c += 1 {
+            if !v.contains(encode2(r, c)) {
+                HashSet<i32> *area = dfs(grid, v, r, c, grid[r][c]);
+                io::dbg(area);
+
+                if !rs.contains_key(grid[r][c]) {
+                    rs[grid[r][c]] = Array::new<void *>();
+                }
+
+                ((Array<void *> *)(rs[grid[r][c]])).push(area);
+            }
+        }
+    }
+
+    // Array<Array<Set<i32>>>
+    Array<void *> *values = rs.values();
+
+    for i32 i = 0; i < values.len(); i += 1 {
+        io::dbg(values[i]);
+        Array<void *> *areas = values[i];
+
+        // for i32 j = 0; j < areas.len(); j += 1 {
+        //     HashSet<i32> *area = areas[j];
+        //     i32 bc = 0;
+        //     i32 sc = 0;
+
+        //     for i32 k = 0; k < area.size(); k += 1 {
+        //         i32 *p = decode2(area.table[k]);
+        //         i32 **nds = [
+        //             [p[0] + dir4[0][0], p[1] + dir4[0][1]],
+        //             [p[0] + dir4[1][0], p[1] + dir4[1][1]],
+        //             [p[0] + dir4[2][0], p[1] + dir4[2][1]],
+        //             [p[0] + dir4[3][0], p[1] + dir4[3][1]],
+        //         ];
+
+        //         for i32 l = 0; l < #len(nds); l += 1 {
+        //             i32 *d = nds[l];
+        //             if !area.contains(encode2(d[0], d[1])) {
+        //                 bc += 1;
+        //             }
+        //         }
+        //     }
+
+        //     for i32 k = 0; k < #len(dir4); k += 1 {
+        //         i32 *d = dir4[k];
+
+        //         HashSet<i32> *s = HashSet::new();
+        //         for i32 l = 0; l < area.size(); l += 1 {
+        //             i32 *p = decode2(area.table[l]);
+        //             i32 encoded = encode2(p[0] + d[0], p[1] + d[1]);
+
+        //             if !area.contains(encoded) {
+        //                 s.add(encoded);
+        //             }
+        //         }
+
+        //         HashSet<i32> *sr = HashSet::new();
+        //         for i32 l = 0; l < s.size(); l += 1 {
+        //             i32 *p = decode2(s.table[l]);
+        //             i32 encoded = encode2(p[0] + d[0], p[1] + d[1]);
+
+        //             while s.contains(encoded) {
+        //                 sr.add(encoded);
+        //                 i32 *decoded = decode2(encoded);
+        //                 encoded = encode2(decoded[0] + d[1], decoded[1] + d[0]);
+        //             }
+        //         }
+
+        //         sc += s.size() - sr.size();
+        //     }
+
+        //     if part2 {
+        //         res += area.size() * sc;
+        //     } else {
+        //         res += area.size() * bc;
+        //     }
+        // }
+    }
+
+    return res;
+}
+
+fn main(i32 argc, string *argv) {
+    string contents = io::read_to_string(argv[1]);
+    Array<string> *grid = contents.split("\n");
+    io::dbg(solution(grid, false));
 }
