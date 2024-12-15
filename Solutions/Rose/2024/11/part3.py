@@ -1,8 +1,10 @@
 # https://i.imgur.com/ARMCVEV.png
 from collections import Counter
+from decimal import Decimal, getcontext
 from math import floor, sqrt
 import sys
 
+getcontext().prec = 1000
 sys.set_int_max_str_digits(int(1e10));
 
 def normal(s):
@@ -21,7 +23,10 @@ def third_eye(s, mid):
     if s < mid:
         return []
     else:
-        t = floor(sqrt(s) ** 3)
+        try:
+            t = floor(sqrt(s) ** 3)
+        except OverflowError:
+            t = floor(Decimal(s).sqrt() ** 3)
         return [t, t - 1, t - 2, t - 3]
 
 def x(sc):
