@@ -1,5 +1,5 @@
 import sys
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 def blink(s):
     if s == 0:
@@ -18,7 +18,7 @@ def zero():
     return 0
 
 def sol(sc):
-    nsc = defaultdict(zero)
+    nsc = Counter()
 
     for s, c in sc.items():
         for ns in blink(s):
@@ -28,7 +28,7 @@ def sol(sc):
 
 with open(sys.argv[1]) as f:
     ss = [int(num) for num in f.read().split()]
-    sc = {s: ss.count(s) for s in set(ss)}
+    sc = Counter(ss)
 
     for i in range(75):
         if i == 25:

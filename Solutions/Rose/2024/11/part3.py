@@ -1,5 +1,6 @@
+# https://i.imgur.com/ARMCVEV.png
 from collections import Counter
-from math import isqrt
+from math import floor, sqrt
 import sys
 
 sys.set_int_max_str_digits(int(1e10));
@@ -20,7 +21,7 @@ def third_eye(s, mid):
     if s < mid:
         return []
     else:
-        t = isqrt(s) ** 3
+        t = floor(sqrt(s) ** 3)
         return [t, t - 1, t - 2, t - 3]
 
 def x(sc):
@@ -42,7 +43,7 @@ def y(sc):
 with open(sys.argv[1]) as f:
     ss = [int(num) for num in f.read().split()]
     sc = Counter(ss)
-    for i in range(120):
+    for i in range(20):
         print(i, sum(sc.values()))
         sc = x(sc)
         sc = y(sc)
