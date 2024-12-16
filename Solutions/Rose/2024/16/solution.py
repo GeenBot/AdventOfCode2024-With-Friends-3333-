@@ -16,7 +16,6 @@ def sol(grid, part2):
     dist = defaultdict(lambda: float('inf'))
     dist[(start[0], start[1], 0)] = 0
     pre = defaultdict(list)
-    v = set()
 
     while pq:
         cost, (y, x, dir) = heappop(pq)
@@ -25,10 +24,6 @@ def sol(grid, part2):
             if cost > dist[(y, x, dir)]:
                 continue
         else:
-            if (y, x, dir) in v:
-                continue
-
-            v.add((y, x, dir))
             if (y, x) == end:
                 return cost
 
@@ -53,30 +48,24 @@ def sol(grid, part2):
                 pre[(ny, nx, dir)].append((y, x, dir))
 
     ecost = float('inf')
-    es = []
+    estates = []
+    tiles = set()
+
     for dir in range(len(DIRS)):
         if dist[(end[0], end[1], dir)] < ecost:
             ecost = dist[(end[0], end[1], dir)]
-            es = [(end[0], end[1], dir)]
+            estates = [(end[0], end[1], dir)]
         elif dist[(end[0], end[1], dir)] == ecost:
-            es.append((end[0], end[1], dir))
+            estates.append((end[0], end[1], dir))
 
-    tiles = set()
-    ps = set(es)
-    fps = set()
-
-    while ps:
-        current = ps.pop()
-        if current in fps:
-            continue
-
-        fps.add(current)
+    while estates:
+        current = estates.pop()
         y, x, _ = current
         tiles.add((y, x))
 
         for prev in pre[current]:
             if dist[prev] + (1000 if prev[2] != current[2] else 1) == dist[current]:
-                ps.add(prev)
+                estates.append(prev)
     return len(tiles)
 
 with open(sys.argv[1]) as f:
