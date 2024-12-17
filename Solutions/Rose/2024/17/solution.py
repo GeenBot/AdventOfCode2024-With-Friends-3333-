@@ -69,6 +69,9 @@ def run_program(program, reg_a, reg_b=0, reg_c=0):
             ip += 2
     return outputs
 
+def s1(program):
+    return ','.join(str(x) for x in run_program(program, a, b, c))
+
 def s2(program):
     valid = [0]
 
@@ -85,5 +88,5 @@ def s2(program):
 
 with open(sys.argv[1]) as f:
     program, a, b, c = parse(f.read())
-    print(','.join(str(x) for x in run_program(program, a, b, c)))
+    print(s1(program))
     print(s2(program))
