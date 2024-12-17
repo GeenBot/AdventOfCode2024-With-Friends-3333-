@@ -70,33 +70,18 @@ def run_program(program, reg_a, reg_b=0, reg_c=0):
     return outputs
 
 def s2(program):
-    # THIS IS SO CURSED LMAOOO
-    # ill upload a video of what i did to solve this if i can be bothered
-    a = 109020013201563 # best guess for the last 3 digits
-    # keep going until you get to the last 10 and then brute force the first 6 by a += 1 until it
-    # # works
-    # a = 1
-    # while True:
-    #     outputs = run_program(program, a)
-    #     if outputs is not None and len(outputs) == len(program):
-    #         print(outputs[-3], program[-3]);
-    #         if outputs[-3] == program[-3] \
-    #             and outputs[-5] == program[-5] \
-    #             and outputs[-4] == program[-4]:
-    #             exit(0)
-    #     a += 1
-    #     print(a)
+    valid = [0]
 
-    while True:
-        outputs = run_program(program, a)
-        if outputs is not None and len(outputs) == len(program):
-            # print(outputs, program)
-            if outputs == program:
-                return a
-        a += 1
-        if a % 10000 == 0:
-            print(len(outputs), outputs, len(program), program)
-            print(a)
+    for l in range(1, len(program) + 1):
+        out = []
+        for num in valid:
+            for offset in range(2 ** 3):
+                a = (2 ** 3) * num + offset
+                if run_program(program, a) == program[-l:]:
+                    out.append(a)
+        valid = out
+
+    return min(valid)
 
 with open(sys.argv[1]) as f:
     program, a, b, c = parse(f.read())
