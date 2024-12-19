@@ -1,9 +1,7 @@
 import sys
 
-def count_ways(d, ps, memo=None):
-    if memo is None:
-        memo = {}
-
+memo = {}
+def count_ways(d, ps):
     if d in memo:
         return memo[d]
 
@@ -14,33 +12,20 @@ def count_ways(d, ps, memo=None):
     for p in ps:
         if d.startswith(p):
             remaining = d[len(p):]
-            ways += count_ways(remaining, ps, memo)
+            ways += count_ways(remaining, ps)
 
     memo[d] = ways
     return ways
 
-def s1(data):
-    parts = data.strip().split('\n\n')
-    ps = [p.strip() for p in parts[0].split(',')]
-    ds = [d.strip() for d in parts[1].split('\n')]
-
-    c = 0
-    for d in ds:
-        if count_ways(d, ps) >= 1:
-            c += 1
-    return c
-
-def s2(data):
-    parts = data.strip().split('\n\n')
-    ps = [p.strip() for p in parts[0].split(',')]
-    ds = [d.strip() for d in parts[1].split('\n')]
-
-    c = 0
-    for d in ds:
-        c += count_ways(d, ps)
-    return c
-
 with open(sys.argv[1]) as f:
-    c = f.read()
-    print(s1(c))
-    print(s2(c))
+    parts = f.read().strip().split('\n\n')
+    ps = [p.strip() for p in parts[0].split(',')]
+    ds = [d.strip() for d in parts[1].split('\n')]
+
+    c1 = c2 = 0
+    for d in ds:
+        res = count_ways(d, ps)
+        c1 += not not res
+        c2 += res
+    print(c1)
+    print(c2)
