@@ -1,25 +1,5 @@
 import sys
 
-def can_make(d, ps, memo=None):
-    if memo is None:
-        memo = {}
-
-    if not d:
-        return True
-
-    if d in memo:
-        return memo[d]
-
-    for p in ps:
-        if d.startswith(p):
-            remaining = d[len(p):]
-            if can_make(remaining, ps, memo):
-                memo[d] = True
-                return True
-
-    memo[d] = False
-    return False
-
 def count_ways(d, ps, memo=None):
     if memo is None:
         memo = {}
@@ -46,7 +26,7 @@ def s1(data):
 
     c = 0
     for d in ds:
-        if can_make(d, ps):
+        if count_ways(d, ps) >= 1:
             c += 1
     return c
 
