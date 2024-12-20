@@ -20,7 +20,7 @@ py: $(DAY)/solution.py
 	@pypy3 $(DAY)/solution.py $(DAY)/$(INPUT)
 
 time:
-	hyperfine --warmup 3 './$(DAY)/solution ./$(DAY)/input.txt' 'pypy3 $(DAY)/solution.py ./$(DAY)/input.txt'
+	hyperfine --warmup 3 './$(DAY)/solution ./$(DAY)/input.txt' 'pypy3 $(DAY)/solution.py $(DAY)/input.txt'
 
 .PHONY: clean
 clean:
