@@ -63,19 +63,17 @@ fn quad(i64 nx, i64 ny, Array<i32> *ans) {
 }
 
 fn sol(Array<Robot *> *robots) {
-    i32 s = 0;
     Array<i32> *ans = Array::new(0, 0, 0, 0);
-    i32 i; i32 j; bool inv; i64 nx; i64 ny;
-    Array<void *> *grid; Array<i32> *row;
+    i32 s = 0;
 
     while true {
-        grid = Array::new();
+        Array<void *> *grid = Array::new();
         defer grid.free();
 
-        for i = 0; i < cols; i += 1 {
-            row = Array::new();
+        for i32 i = 0; i < cols; i += 1 {
+            Array<i32> *row = Array::new();
 
-            for j = 0; j < rows; j += 1 {
+            for i32 j = 0; j < rows; j += 1 {
                 row.push(0);
             }
 
@@ -83,11 +81,11 @@ fn sol(Array<Robot *> *robots) {
         }
 
         s += 1;
-        inv = false;
+        bool inv = false;
 
-        for i = 0; i < robots.len(); i += 1 {
-            nx = (robots[i].p[0] + s * robots[i].v[0]).mod(rows);
-            ny = (robots[i].p[1] + s * robots[i].v[1]).mod(cols);
+        for i32 i = 0; i < robots.len(); i += 1 {
+            i32 nx = (robots[i].p[0] + s * robots[i].v[0]).mod(rows);
+            i32 ny = (robots[i].p[1] + s * robots[i].v[1]).mod(cols);
 
             if s == 100 {
                 quad(nx, ny, ans);

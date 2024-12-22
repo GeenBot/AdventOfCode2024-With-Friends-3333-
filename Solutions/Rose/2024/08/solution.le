@@ -33,7 +33,6 @@ fn get_coords(i32 rows, i32 cols, Array<string> *grid) {
 }
 
 fn solution(i32 rows, i32 cols, Array<void *> *coords, bool part2) {
-    i32 dr; i32 dc; i32 nr; i32 nc;
     Array<i32> *antinodes = Array::new();
     defer antinodes.free();
 
@@ -56,12 +55,12 @@ fn solution(i32 rows, i32 cols, Array<void *> *coords, bool part2) {
                 i32 x2 = coord[k] % cols;
                 i32 y2 = coord[k] / cols;
 
-                dr = x1 - x2;
-                dc = y1 - y2;
+                i32 dr = x1 - x2;
+                i32 dc = y1 - y2;
 
                 if part2 {
-                    nr = x1;
-                    nc = y1;
+                    i32 nr = x1;
+                    i32 nc = y1;
 
                     while is_valid(nr, nc, rows, cols) {
                         i32 encoded = encode(nr, nc, cols);
@@ -74,8 +73,8 @@ fn solution(i32 rows, i32 cols, Array<void *> *coords, bool part2) {
                         nc += dc;
                     }
                 } else {
-                    nr = x1 + dr;
-                    nc = y1 + dc;
+                    i32 nr = x1 + dr;
+                    i32 nc = y1 + dc;
 
                     if is_valid(nr, nc, rows, cols) {
                         i32 encoded = encode(nr, nc, cols);
