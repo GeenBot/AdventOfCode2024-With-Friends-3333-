@@ -10,8 +10,8 @@ fn encode(i32 x, i32 y, i32 cols) -> i32 {
     return y * cols + x;
 }
 
-fn get_coords(string[] grid) {
-    i32[][] coords = [];
+fn get_coords(string[] grid) -> i32[][] {
+    let coords = [];
 
     for let row = 0; row < grid.len(); row += 1 {
         for let col = 0; col < grid[0].len(); col += 1 {

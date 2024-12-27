@@ -23,8 +23,8 @@ fn Robot::new(i64[] p, i64[] v) {
     return robot;
 }
 
-fn parse(string[] c) {
-    Robot *[] robots = [];
+fn parse(string[] c) -> Robot *[] {
+    let robots = [];
 
     for line in c {
         string[] parts = line.split(" ");

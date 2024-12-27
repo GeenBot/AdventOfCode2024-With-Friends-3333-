@@ -23,13 +23,12 @@ fn Machine::new(i64[] a, i64[] b, i64[] p) {
     return machine;
 }
 
-fn parse(string contents, i64 offset) {
+fn parse(string contents, i64 offset) -> Machine *[] {
     let parts = contents.split("\n\n");
-    Machine *[] machines = [];
+    let machines = [];
 
     for part in parts {
         let x = part.split("\n");
-
         let machine = Machine::new(
             x[0].nums(),
             x[1].nums(),

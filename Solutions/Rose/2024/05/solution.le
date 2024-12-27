@@ -69,9 +69,9 @@ fn s2(i32[][] rs, i32[][] us) {
     return sum;
 }
 
-fn get_list(string list, string delimiter) {
+fn get_list(string list, string delimiter) -> i32[][] {
     let parts = list.split("\n");
-    i32[][] res = [];
+    let res = [];
 
     for part in parts {
         let inner = part.split(delimiter);

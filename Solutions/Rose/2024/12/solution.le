@@ -8,8 +8,8 @@ use std/io;
 use util;
 
 fn dfs(string[] grid, HashSet<i32> *v, i32 r, i32 c, i32 p) {
-    let stack = [encode2(r, c)];
     let a = HashSet::new<i32>();
+    let stack = [encode2(r, c)];
 
     while !stack.is_empty() {
         let encoded = stack.pop();
@@ -38,14 +38,14 @@ fn dfs(string[] grid, HashSet<i32> *v, i32 r, i32 c, i32 p) {
 }
 
 fn solution(string[] grid, bool part2) {
-    HashMap<i32, HashSet<i32> *[]> *rs = HashMap::new();
+    let rs = HashMap::new<i32, HashSet<i32> *[]>();
     let v = HashSet::new<i32>();
     let res = 0;
 
     for let r = 0; r < grid.len(); r += 1 {
         for let c = 0; c < grid[0].len(); c += 1 {
             if !v.contains(encode2<i32>(r, c)) {
-                HashSet<i32> *area = dfs(grid, v, r, c, grid[r][c]);
+                let area = dfs(grid, v, r, c, grid[r][c]);
 
                 if !rs.contains_key(grid[r][c]) {
                     rs[grid[r][c]] = Array::new<HashSet<i32> *>();
