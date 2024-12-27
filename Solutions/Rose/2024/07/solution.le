@@ -10,18 +10,18 @@ fn concat(i64 a, i64 b) -> i64 {
     if b < 1000 { return a * 1000 + b; }
 }
 
-fn is_valid(i64 target, Array<i64> *numbers, bool part2) -> bool {
-    i32 operations = 2 + part2;
-    i32 count = numbers.len() - 2;
-    i64 combinations = math::pow(operations, count);
-    i64 result;
+fn is_valid(i64 target, i64[] numbers, bool part2) -> bool {
+    let operations = 2 + part2;
+    let count = numbers.len() - 2;
+    let combinations = math::pow(operations, count);
+    i64 result = 0;
 
-    for i32 i = 0; i < combinations; i += 1 {
+    for let i = 0; i < combinations; i += 1 {
         result = numbers[1];
-        i32 combination = i;
+        let combination = i;
 
-        for i32 j = 0; j < count; j += 1 {
-            i32 operation = combination % operations;
+        for let j = 0; j < count; j += 1 {
+            let operation = combination % operations;
             combination /= operations;
 
             if operation == 0b00 {
@@ -52,12 +52,10 @@ fn is_valid(i64 target, Array<i64> *numbers, bool part2) -> bool {
     return false;
 }
 
-fn solution(i32 length, Array<i64> **number_arrays, bool part2) -> i64 {
-    i64 total = 0;
+fn solution(i64[][] number_arrays, bool part2) -> i64 {
+    let total = (i64)0;
 
-    for i32 i = 0; i < length; i += 1 {
-        Array<i64> *numbers = number_arrays[i];
-
+    for numbers in number_arrays {
         if is_valid(numbers[0], numbers, part2) {
             total += numbers[0];
         }
@@ -67,28 +65,24 @@ fn solution(i32 length, Array<i64> **number_arrays, bool part2) -> i64 {
 }
 
 fn main(i32 argc, string *argv) {
-    string contents = io::read_to_string(argv[1]);
-    Array<string> *lines = contents.split("\n");
-    Array<i64> *number_arrays[lines.len()];
-    defer lines.free();
+    let contents = io::read_to_string(argv[1]);
+    let lines = contents.split("\n");
+    i64[][] number_arrays = [];
 
-    for i32 j = 0; j < lines.len(); j += 1 {
-        Array<string> *parts = lines[j].split(": ");
-        defer parts.free();
+    for line in lines {
+        let parts = line.split(": ");
+        let strings = parts[1].split(" ");
 
-        i64 target = i64::parse(parts[0]);
-        Array<string> *strings = parts[1].split(" ");
-        defer strings.free();
+        let target = i64::parse(parts[0]);
+        let numbers = [target];
 
-        Array<i64> *numbers = Array::new(target);
-
-        for i32 i = 0; i < strings.len(); i += 1 {
-            numbers.push(i64::parse(strings[i]));
+        for str in strings {
+            numbers.push(i64::parse(str));
         }
 
-        number_arrays[j] = numbers;
+        number_arrays.push(numbers);
     }
 
-    io::dbg(solution(lines.len(), number_arrays, false));
-    io::dbg(solution(lines.len(), number_arrays, true));
+    io::dbg(solution(number_arrays, false));
+    io::dbg(solution(number_arrays, true));
 }

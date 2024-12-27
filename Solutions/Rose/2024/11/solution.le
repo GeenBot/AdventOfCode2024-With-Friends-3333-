@@ -5,29 +5,26 @@ use std/cast;
 use std/io;
 
 fn HashMap::sum<T, U>(HashMap<T, U> *self) {
-    Array<T> *keys = self.keys();
     i64 sum = 0;
 
-    defer keys.free();
-
-    for i32 i = 0; i < keys.len(); i += 1 {
-        sum += self.get(keys[i]);
+    for key in self.keys() {
+        sum += self.get(key);
     }
 
     return sum;
 }
 
-fn blink(i64 s) -> Array<i64> * {
-    Array<i64> *result = Array::new();
+fn blink(i64 s) -> i64[] {
+    let result = [];
 
     if s == 0 {
         result.push(1);
         return result;
     }
 
-    string ss = "{}".format(s);
-    i32 l = ss.len();
-    i32 hl = l / 2;
+    let ss = "{}".format(s);
+    let l = ss.len();
+    let hl = l / 2;
 
     if l % 2 == 0 {
         result.push(i64::parse(ss.slice(0, hl)));
@@ -39,24 +36,19 @@ fn blink(i64 s) -> Array<i64> * {
     return result;
 }
 
-fn sol(HashMap<i64, i64> *sc) -> HashMap<i64, i64> * {
-    HashMap<i64, i64> *nsc = HashMap::new();
-    Array<i64> *keys = sc.keys();
+fn sol(HashMap<i64, i64> *sc) {
+    let nsc = HashMap::new<i64, i64>();
 
-    for i32 i = 0; i < keys.len(); i += 1 {
-        i64 s = keys[i];
-        i64 c = sc[s];
+    for s in sc.keys() {
+        let c = sc[s];
+        let ns = blink(s);
 
-        Array<i64> *ns = blink(s);
-
-        for i32 j = 0; j < ns.len(); j += 1 {
-            i64 ns_value = ns[j];
-
-            if !nsc.contains_key(ns_value) {
-                nsc[ns_value] = 0;
+        for val in ns {
+            if !nsc.contains_key(val) {
+                nsc[val] = 0;
             }
 
-            nsc[ns_value] += c;
+            nsc[val] += c;
         }
     }
 
@@ -64,22 +56,17 @@ fn sol(HashMap<i64, i64> *sc) -> HashMap<i64, i64> * {
 }
 
 fn main(i32 argc, string *argv) {
-    string contents = io::read_to_string(argv[1]);
-    Array<string> *tokens = contents.split(" ");
-    Array<i64> *ss = Array::new();
-    HashMap<i64, i64> *sc = HashMap::new();
+    let contents = io::read_to_string(argv[1]);
+    let tokens = contents.split(" ");
 
-    defer tokens.free();
-    defer ss.free();
-    defer sc.free();
+    i64[] ss = [];
+    let sc = HashMap::new<i64, i64>();
 
-    for i32 i = 0; i < tokens.len(); i += 1 {
-        ss.push(i64::parse(tokens[i]));
+    for token in tokens {
+        ss.push(i64::parse(token));
     }
 
-    for i32 i = 0; i < ss.len(); i += 1 {
-        i64 s = ss[i];
-
+    for s in ss {
         if !sc.contains_key(s) {
             sc[s] = 0;
         }
@@ -87,7 +74,7 @@ fn main(i32 argc, string *argv) {
         sc[s] += 1;
     }
 
-    for i32 i = 0; i < 75; i += 1 {
+    for let i = 0; i < 75; i += 1 {
         if i == 25 {
             io::dbg(sc.sum());
         }

@@ -7,12 +7,12 @@ use std/io;
 use util;
 
 struct Machine {
-    Array<i64> *a;
-    Array<i64> *b;
-    Array<i64> *p;
+    i64[] a;
+    i64[] b;
+    i64[] p;
 };
 
-fn Machine::new(Array<i64> *a, Array<i64> *b, Array<i64> *p) {
+fn Machine::new(i64[] a, i64[] b, i64[] p) {
     Machine *machine = malloc(#size(Machine));
     *machine = malloc(#size(Machine));
 
@@ -24,20 +24,20 @@ fn Machine::new(Array<i64> *a, Array<i64> *b, Array<i64> *p) {
 }
 
 fn parse(string contents, i64 offset) {
-    Array<string> *parts = contents.split("\n\n");
-    Array<Machine *> *machines = Array::new();
+    let parts = contents.split("\n\n");
+    Machine *[] machines = [];
 
-    for i32 i = 0; i < parts.len(); i += 1 {
-        Array<string> *inner = parts[i].split("\n");
-        Machine *machine = Machine::new(
-            inner[0].nums(),
-            inner[1].nums(),
-            inner[2].nums()
+    for part in parts {
+        let x = part.split("\n");
+
+        let machine = Machine::new(
+            x[0].nums(),
+            x[1].nums(),
+            x[2].nums()
         );
 
         machine.p[0] += offset;
         machine.p[1] += offset;
-
         machines.push(machine);
     }
 
@@ -45,30 +45,29 @@ fn parse(string contents, i64 offset) {
 }
 
 fn solution(string contents, i64 offset) {
-    Array<Machine *> *machines = parse(contents, offset);
+    let machines = parse(contents, offset);
     i64 total = 0;
 
-    for i32 i = 0; i < machines.len(); i += 1 {
-        Machine *machine = machines[i];
-        Array<i64> *a = machine.a;
-        Array<i64> *b = machine.b;
-        Array<i64> *p = machine.p;
+    for machine in machines {
+        let a = machine.a;
+        let b = machine.b;
+        let p = machine.p;
 
-        i64 d1 = p[0] * b[1] - p[1] * b[0];
-        i64 d2 = a[0] * b[1] - a[1] * b[0];
+        let d1 = p[0] * b[1] - p[1] * b[0];
+        let d2 = a[0] * b[1] - a[1] * b[0];
 
         if ((f64)d1 / d2) != d1 / d2 {
             continue;
         }
 
-        i64 m = d1 / d2;
-        i64 d3 = p[1] - a[1] * m;
+        let m = d1 / d2;
+        let d3 = p[1] - a[1] * m;
 
         if ((f64)d3 / b[1]) != d3 / b[1] {
             continue;
         }
 
-        i64 n = d3 / b[1];
+        let n = d3 / b[1];
         total += 3 * m + n;
     }
 
@@ -76,7 +75,7 @@ fn solution(string contents, i64 offset) {
 }
 
 fn main(i32 argc, string *argv) {
-    string contents = io::read_to_string(argv[1]);
+    let contents = io::read_to_string(argv[1]);
     io::dbg(solution(contents, 0));
     io::dbg(solution(contents, 1e13));
 }

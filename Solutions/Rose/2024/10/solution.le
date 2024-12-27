@@ -6,12 +6,12 @@ use std/io;
 
 use util;
 
-fn find(Array<void *> *map, i32 rows, i32 cols) {
-    Array<i32 *> *ts = Array::new();
+fn find(i32[][] grid) {
+    i32 *[] ts = [];
 
-    for i32 row = 0; row < rows; row += 1 {
-        for i32 col = 0; col < cols; col += 1 {
-            if ((Array<i32> *)(map[row]))[col] == 0 {
+    for let row = 0; row < grid.len(); row += 1 {
+        for let col = 0; col < grid[0].len(); col += 1 {
+            if grid[row][col] == 0 {
                 ts.push(tuple(row, col));
             }
         }
@@ -20,9 +20,9 @@ fn find(Array<void *> *map, i32 rows, i32 cols) {
     return ts;
 }
 
-fn search(Array<void *> *map, i32 *start, i32 rows, i32 cols, bool part2) -> i32 {
-    Array<i32 *> *stack = Array::new(start);
-    HashSet<i32> *set = HashSet::new();
+fn search(i32[][] grid, i32 *start, bool part2) -> i32 {
+    HashSet<i32> *v = HashSet::new();
+    i32 *[] stack = [start];
     i32 c = 0;
 
     while !stack.is_empty() {
@@ -33,23 +33,23 @@ fn search(Array<void *> *map, i32 *start, i32 rows, i32 cols, bool part2) -> i32
         if !part2 {
             i32 encoded = encode2(x, y);
 
-            if set.contains(encoded) {
+            if v.contains(encoded) {
                 continue;
             }
 
-            set.add(encoded);
+            v.add(encoded);
         }
 
-        if ((Array<i32> *)map[x])[y] == 9 {
+        if grid[x][y] == 9 {
             c += 1;
         }
 
-        for i32 i = 0; i < #len(dir4); i += 1 {
-            i32 nx = x + dir4[i][0];
-            i32 ny = y + dir4[i][1];
+        for dir in dir4 {
+            let nx = x + dir[0];
+            let ny = y + dir[1];
 
-            if nx >= 0 && nx < rows && ny >= 0 && ny < cols {
-                if ((Array<i32> *)(map[nx]))[ny] == ((Array<i32> *)(map[x]))[y] + 1 {
+            if nx >= 0 && nx < grid.len() && ny >= 0 && ny < grid[0].len() {
+                if grid[nx][ny] == grid[x][y] + 1 {
                     stack.push(tuple(nx, ny));
                 }
             }
@@ -59,38 +59,32 @@ fn search(Array<void *> *map, i32 *start, i32 rows, i32 cols, bool part2) -> i32
     return c;
 }
 
-fn solution(Array<void *> *map, Array<i32 *> *ts, i32 rows, i32 cols, bool part2) -> i32 {
-    i32 c = 0;
+fn solution(i32[][] grid, i32 *[] ts, bool part2) -> i32 {
+    let c = 0;
 
-    for i32 i = 0; i < ts.len(); i += 1 {
-        c += search(map, ts[i], rows, cols, part2);
+    for t in ts {
+        c += search(grid, t, part2);
     }
 
     return c;
 }
 
 fn main(i32 argc, string *argv) {
-    string contents = io::read_to_string(argv[1]);
-    Array<string> *lines = contents.split("\n");
-    Array<void *> *map = Array::new();
+    let contents = io::read_to_string(argv[1]);
+    let lines = contents.split("\n");
+    i32[][] grid = [];
 
-    defer lines.free();
-    defer map.free();
+    for line in lines {
+        i32[] inner = [];
 
-    for i32 i = 0; i < lines.len(); i += 1 {
-        Array<i32> *inner = Array::new();
-
-        for i32 j = 0; j < lines[i].len(); j += 1 {
-            inner.push(lines[i][j] - '0');
+        for char c in line {
+            inner.push(c - '0');
         }
 
-        map.push(inner);
+        grid.push(inner);
     }
 
-    i32 rows = map.len();
-    i32 cols = ((Array<i32> *)map[0]).len();
-
-    Array<i32 *> *ts = find(map, rows, cols);
-    io::dbg(solution(map, ts, rows, cols, false));
-    io::dbg(solution(map, ts, rows, cols, true));
+    let ts = find(grid);
+    io::dbg(solution(grid, ts, false));
+    io::dbg(solution(grid, ts, true));
 }

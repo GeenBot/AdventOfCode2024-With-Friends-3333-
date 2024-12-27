@@ -4,11 +4,10 @@ use std/cast;
 use std/math;
 use std/io;
 
-fn is_ordered(Array<void *> *rs, Array<i32> *u) {
-    for i32 i = 0; i < rs.len(); i += 1 {
-        Array<i32> *r = rs[i];
-        i32 x = r[0];
-        i32 y = r[1];
+fn is_ordered(i32[][] rs, i32[] u) {
+    for r in rs {
+        let x = r[0];
+        let y = r[1];
 
         if u.includes(x) && u.includes(y) && u.index(x) > u.index(y) {
             return false;
@@ -18,14 +17,12 @@ fn is_ordered(Array<void *> *rs, Array<i32> *u) {
     return true;
 }
 
-fn reorder(Array<void *> *rs, Array<i32> *u) {
+fn reorder(i32[][] rs, i32[] u) {
     while true {
-        bool s = false;
+        let s = false;
 
-        for i32 i = 0; i < u.len() - 1; i += 1 {
-            for i32 j = 0; j < rs.len(); j += 1 {
-                Array<i32> *r = rs[j];
-
+        for let i = 0; i < u.len() - 1; i += 1 {
+            for r in rs {
                 if u[i] == r[0] && u[i + 1] == r[1] {
                     i32 temp = u[i];
                     u[i] = u[i + 1];
@@ -43,52 +40,44 @@ fn reorder(Array<void *> *rs, Array<i32> *u) {
     return u;
 }
 
-fn s1(Array<void *> *rs, Array<void *> *us) {
-    Array<i32> *res = Array::new();
-    defer res.free();
+fn s1(i32[][] rs, i32[][] us) {
+    i32[] res = [];
 
-    for i32 i = 0; i < us.len(); i += 1 {
-        Array<i32> *u = us[i];
-
+    for u in us {
         if is_ordered(rs, u) {
-            i32 mid = math::floor(u.len() / 2);
+            let mid = math::floor(u.len() / 2);
             res.push(u[mid]);
         }
     }
 
-    i32 sum = res.sum();
+    let sum = res.sum();
     return sum;
 }
 
-fn s2(Array<void *> *rs, Array<void *> *us) {
-    Array<i32> *res = Array::new();
-    defer res.free();
+fn s2(i32[][] rs, i32[][] us) {
+    i32[] res = [];
 
-    for i32 i = 0; i < us.len(); i += 1 {
-        Array<i32> *u = us[i];
-
+    for u in us {
         if !is_ordered(rs, u) {
-            Array<i32> *u2 = reorder(rs, u.clone());
-            i32 mid = math::floor(u2.len() / 2);
+            let u2 = reorder(rs, u.clone());
+            let mid = math::floor(u2.len() / 2);
             res.push(u2[mid]);
         }
     }
 
-    i32 sum = res.sum();
+    let sum = res.sum();
     return sum;
 }
 
 fn get_list(string list, string delimiter) {
-    Array<string> *parts = list.split("\n");
-    Array<void *> *res = Array::new();
+    let parts = list.split("\n");
+    i32[][] res = [];
 
-    for i32 i = 0; i < parts.len(); i += 1 {
-        Array<string> *inner = parts[i].split(delimiter);
-        defer inner.free();
+    for part in parts {
+        let inner = part.split(delimiter);
+        i32[] numbers = [];
 
-        Array<i32> *numbers = Array::new();
-
-        for i32 j = 0; j < inner.len(); j += 1 {
+        for let j = 0; j < inner.len(); j += 1 {
             numbers.push(i32::parse(inner[j]));
         }
 
@@ -99,18 +88,11 @@ fn get_list(string list, string delimiter) {
 }
 
 fn main(i32 argc, string *argv) {
-    string contents = io::read_to_string(argv[1]);
-    Array<string> *parts = contents.split("\n\n");
-    defer parts.free();
+    let contents = io::read_to_string(argv[1]);
+    let parts = contents.split("\n\n");
 
-    string r_data = parts[0];
-    string u_data = parts[1];
-
-    Array<void *> *rs = get_list(r_data, "|");
-    Array<void *> *us = get_list(u_data, ",");
-
-    defer rs.free();
-    defer us.free();
+    let rs = get_list(parts[0], "|");
+    let us = get_list(parts[1], ",");
 
     io::dbg(s1(rs, us));
     io::dbg(s2(rs, us));

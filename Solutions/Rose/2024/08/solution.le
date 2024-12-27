@@ -10,21 +10,21 @@ fn encode(i32 x, i32 y, i32 cols) -> i32 {
     return y * cols + x;
 }
 
-fn get_coords(i32 rows, i32 cols, Array<string> *grid) {
-    Array<void *> *coords = Array::new();
+fn get_coords(string[] grid) {
+    i32[][] coords = [];
 
-    for i32 row = 0; row < rows; row += 1 {
-        for i32 col = 0; col < cols; col += 1 {
-            char cell = grid[row][col];
+    for let row = 0; row < grid.len(); row += 1 {
+        for let col = 0; col < grid[0].len(); col += 1 {
+            let cell = grid[row][col];
 
             if cell != '.' {
-                i32 encoded = encode(col, row, cols);
+                let encoded = encode(col, row, grid[0].len());
 
                 while coords.len() <= cell {
                     coords.push(Array::new<i32>());
                 }
 
-                ((Array<i32> *)(coords[cell])).push(encoded);
+                coords[cell].push(encoded);
             }
         }
     }
@@ -32,38 +32,35 @@ fn get_coords(i32 rows, i32 cols, Array<string> *grid) {
     return coords;
 }
 
-fn solution(i32 rows, i32 cols, Array<void *> *coords, bool part2) {
-    Array<i32> *antinodes = Array::new();
-    defer antinodes.free();
+fn solution(string[] grid, i32[][] coords, bool part2) {
+    i32[] antinodes = [];
 
-    for i32 i = 0; i < coords.len(); i += 1 {
-        Array<i32> *coord = coords[i];
-
+    for coord in coords {
         if coord.is_empty() {
             continue;
         }
 
-        for i32 j = 0; j < coord.len(); j += 1 {
-            i32 x1 = coord[j] % cols;
-            i32 y1 = coord[j] / cols;
+        for j in coord {
+            let x1 = j % grid[0].len();
+            let y1 = j / grid[0].len();
 
-            for i32 k = 0; k < coord.len(); k += 1 {
-                if coord[j] == coord[k] {
+            for k in coord {
+                if j == k {
                     continue;
                 }
 
-                i32 x2 = coord[k] % cols;
-                i32 y2 = coord[k] / cols;
+                let x2 = k % grid[0].len();
+                let y2 = k / grid[0].len();
 
-                i32 dr = x1 - x2;
-                i32 dc = y1 - y2;
+                let dr = x1 - x2;
+                let dc = y1 - y2;
 
                 if part2 {
-                    i32 nr = x1;
-                    i32 nc = y1;
+                    let nr = x1;
+                    let nc = y1;
 
-                    while is_valid(nr, nc, rows, cols) {
-                        i32 encoded = encode(nr, nc, cols);
+                    while is_valid(nr, nc, grid.len(), grid[0].len()) {
+                        let encoded = encode(nr, nc, grid[0].len());
 
                         if !antinodes.contains(encoded) {
                             antinodes.push(encoded);
@@ -73,11 +70,11 @@ fn solution(i32 rows, i32 cols, Array<void *> *coords, bool part2) {
                         nc += dc;
                     }
                 } else {
-                    i32 nr = x1 + dr;
-                    i32 nc = y1 + dc;
+                    let nr = x1 + dr;
+                    let nc = y1 + dc;
 
-                    if is_valid(nr, nc, rows, cols) {
-                        i32 encoded = encode(nr, nc, cols);
+                    if is_valid(nr, nc, grid.len(), grid[0].len()) {
+                        let encoded = encode(nr, nc, grid[0].len());
 
                         if !antinodes.contains(encoded) {
                             antinodes.push(encoded);
@@ -88,21 +85,15 @@ fn solution(i32 rows, i32 cols, Array<void *> *coords, bool part2) {
         }
     }
 
-    i32 length = antinodes.len();
+    let length = antinodes.len();
     return length;
 }
 
 fn main(i32 argc, string *argv) {
-    string contents = io::read_to_string(argv[1]);
-    Array<string> *grid = contents.split("\n");
-    defer grid.free();
+    let contents = io::read_to_string(argv[1]);
+    let grid = contents.split("\n");
+    let coords = get_coords(grid);
 
-    i32 rows = grid.len();
-    i32 cols = grid[0].len();
-
-    Array<void *> *coords = get_coords(rows, cols, grid);
-    defer coords.free();
-
-    io::dbg(solution(rows, cols, coords, false));
-    io::dbg(solution(rows, cols, coords, true));
+    io::dbg(solution(grid, coords, false));
+    io::dbg(solution(grid, coords, true));
 }

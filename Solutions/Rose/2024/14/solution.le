@@ -9,11 +9,11 @@ const i64 rows = 101;
 const i64 cols = 103;
 
 struct Robot {
-    Array<i64> *p;
-    Array<i64> *v;
+    i64[] p;
+    i64[] v;
 };
 
-fn Robot::new(Array<i64> *p, Array<i64> *v) {
+fn Robot::new(i64[] p, i64[] v) {
     Robot *robot = malloc(#size(Robot));
     *robot = malloc(#size(Robot));
 
@@ -23,15 +23,13 @@ fn Robot::new(Array<i64> *p, Array<i64> *v) {
     return robot;
 }
 
-fn parse(Array<string> *c) {
-    Array<Robot *> *robots = Array::new();
+fn parse(string[] c) {
+    Robot *[] robots = [];
 
-    for i32 i = 0; i < c.len(); i += 1 {
-        string line = c[i];
-
-        Array<string> *parts = line.split(" ");
-        Array<i64> *p = parts[0].nums();
-        Array<i64> *v = parts[1].nums();
+    for line in c {
+        string[] parts = line.split(" ");
+        i64[] p = parts[0].nums();
+        i64[] v = parts[1].nums();
 
         robots.push(Robot::new(p, v));
     }
@@ -39,7 +37,7 @@ fn parse(Array<string> *c) {
     return robots;
 }
 
-fn quad(i64 nx, i64 ny, Array<i32> *ans) {
+fn quadrant(i64 nx, i64 ny, i32[] ans) {
     if (nx == rows / 2) || (ny == cols / 2) {
         return;
     }
@@ -62,18 +60,17 @@ fn quad(i64 nx, i64 ny, Array<i32> *ans) {
     ans[3] += 1;
 }
 
-fn sol(Array<Robot *> *robots) {
-    Array<i32> *ans = Array::new(0, 0, 0, 0);
-    i32 s = 0;
+fn solution(Robot *[] robots) {
+    let ans = [0, 0, 0, 0];
+    let s = 0;
 
     while true {
-        Array<void *> *grid = Array::new();
-        defer grid.free();
+        i32[][] grid = [];
 
-        for i32 i = 0; i < cols; i += 1 {
-            Array<i32> *row = Array::new();
+        for let i = 0; i < cols; i += 1 {
+            i32[] row = [];
 
-            for i32 j = 0; j < rows; j += 1 {
+            for let j = 0; j < rows; j += 1 {
                 row.push(0);
             }
 
@@ -81,19 +78,19 @@ fn sol(Array<Robot *> *robots) {
         }
 
         s += 1;
-        bool inv = false;
+        let inv = false;
 
-        for i32 i = 0; i < robots.len(); i += 1 {
-            i32 nx = (robots[i].p[0] + s * robots[i].v[0]).mod(rows);
-            i32 ny = (robots[i].p[1] + s * robots[i].v[1]).mod(cols);
+        for let i = 0; i < robots.len(); i += 1 {
+            let nx = (robots[i].p[0] + s * robots[i].v[0]).mod(rows);
+            let ny = (robots[i].p[1] + s * robots[i].v[1]).mod(cols);
 
             if s == 100 {
-                quad(nx, ny, ans);
+                quadrant(nx, ny, ans);
             }
 
-            ((Array<i32> *)(grid[ny]))[nx] += 1;
+            grid[ny][nx] += 1;
 
-            if ((Array<i32> *)(grid[ny]))[nx] > 1 {
+            if grid[ny][nx] > 1 {
                 inv = true;
             }
         }
@@ -111,8 +108,8 @@ fn sol(Array<Robot *> *robots) {
 }
 
 fn main(i32 argc, string *argv) {
-    string contents = io::read_to_string(argv[1]);
-    Array<string> *lines = contents.split("\n");
-    Array<Robot *> *robots = parse(lines);
-    io::dbg(sol(robots));
+    let contents = io::read_to_string(argv[1]);
+    let lines = contents.split("\n");
+    let robots = parse(lines);
+    io::dbg(solution(robots));
 }

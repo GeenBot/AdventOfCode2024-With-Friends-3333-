@@ -4,41 +4,35 @@ use std/cast;
 use std/math;
 use std/io;
 
-fn lists(Array<i32> *ls, Array<i32> *rs, string input) {
-    Array<string> *parts = input.split("\n");
+fn lists(i32[] ls, i32[] rs, string input) {
+    let parts = input.split("\n");
 
-    for i32 i = 0; i < parts.len(); i += 1 {
-        Array<string> *numbers = parts[i].split("   ");
+    for part in parts {
+        let numbers = part.split("   ");
         ls.push(i32::parse(numbers[0]));
         rs.push(i32::parse(numbers[1]));
     }
 }
 
-fn s1(Array<i32> *ls, Array<i32> *rs) {
-    Array<i32> *lss = ls.clone();
-    Array<i32> *rss = rs.clone();
-    defer lss.free();
-    defer rss.free();
-
+fn s1(i32[] ls, i32[] rs) {
+    let lss = ls.clone();
+    let rss = rs.clone();
     lss.sort();
     rss.sort();
 
-    i32 dist = 0;
+    let dist = 0;
 
-    for i32 i = 0; i < lss.len(); i += 1 {
+    for let i = 0; i < lss.len(); i += 1 {
         dist += math::abs(lss[i] - rss[i]);
     }
 
     return dist;
 }
 
-fn s2(Array<i32> *ls, Array<i32> *rs) {
-    Array<i32> *counts = Array::with_capacity(10);
-    defer counts.free();
+fn s2(i32[] ls, i32[] rs) {
+    i32[] counts = [];
 
-    for i32 i = 0; i < rs.len(); i += 1 {
-        i32 r = rs[i];
-
+    for r in rs {
         while r >= counts.len() {
             counts.push(0);
         }
@@ -46,12 +40,10 @@ fn s2(Array<i32> *ls, Array<i32> *rs) {
         counts[r] += 1;
     }
 
-    i32 score = 0;
+    let score = 0;
 
-    for i32 i = 0; i < ls.len(); i += 1 {
-        i32 l = ls[i];
-
-        if ls[i] < counts.len() {
+    for l in ls {
+        if l < counts.len() {
             score += l * counts[l];
         }
     }
@@ -60,11 +52,8 @@ fn s2(Array<i32> *ls, Array<i32> *rs) {
 }
 
 fn main(i32 argc, string *argv) {
-    Array<i32> *ls = Array::new();
-    Array<i32> *rs = Array::new();
-    defer ls.free();
-    defer rs.free();
-
+    i32[] ls = [];
+    i32[] rs = [];
     lists(ls, rs, io::read_to_string(argv[1]));
 
     io::dbg(s1(ls, rs));

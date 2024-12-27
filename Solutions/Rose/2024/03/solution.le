@@ -4,17 +4,17 @@ use std/cast;
 use std/io;
 
 fn s1(string contents) {
-    Array<string> *parts = contents.split("mul(");
-    i32 sum = 0;
+    let parts = contents.split("mul(");
+    let sum = 0;
 
-    for i32 i = 0; i < parts.len(); i += 1 {
-        Array<string> *numbers = parts[i].split(",");
+    for part in parts {
+        let numbers = part.split(",");
 
         if numbers.len() > 1 {
             i32 left;
 
-            string end = "";
-            i64 right = numbers[1].strtol(&end, 10);
+            let end = "";
+            let right = numbers[1].strtol(&end, 10);
 
             if i32::try_parse(numbers[0], &left) && end[0] == ')' {
                 sum += left * right;
@@ -26,19 +26,18 @@ fn s1(string contents) {
 }
 
 fn s2(string contents) {
-    Array<string> *dos = contents.split("do()");
-    i32 sum = 0;
+    let dos = contents.split("do()");
+    let sum = 0;
 
-    for i32 i = 0; i < dos.len(); i += 1 {
-        string contents = dos[i].split("don't()")[0];
-        sum += s1(contents);
+    for d in dos {
+        sum += s1(d.split("don't()")[0]);
     }
 
     return sum;
 }
 
 fn main(i32 argc, string *argv) {
-    string contents = io::read_to_string(argv[1]);
+    let contents = io::read_to_string(argv[1]);
     io::dbg(s1(contents));
     io::dbg(s2(contents));
 }

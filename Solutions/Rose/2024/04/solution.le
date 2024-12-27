@@ -3,13 +3,13 @@ use std/collections/tuple;
 use std/split;
 use std/io;
 
-fn check_word(Array<string> *grid, string word, i32 x, i32 y, i32 dx, i32 dy) {
-    i32 rows = grid.len();
-    i32 cols = grid[0].len();
+fn check_word(string[] grid, string word, i32 x, i32 y, i32 dx, i32 dy) {
+    let rows = grid.len();
+    let cols = grid[0].len();
 
-    for i32 k = 0; k < word.len(); k += 1 {
-        i32 nx = x + k * dx;
-        i32 ny = y + k * dy;
+    for let k = 0; k < word.len(); k += 1 {
+        let nx = x + k * dx;
+        let ny = y + k * dy;
 
         if nx < 0 || nx >= rows || ny < 0 || ny >= cols || grid[nx][ny] != word[k] {
             return false;
@@ -19,13 +19,13 @@ fn check_word(Array<string> *grid, string word, i32 x, i32 y, i32 dx, i32 dy) {
     return true;
 }
 
-fn s1(Array<string> *grid) {
-    i32 rows = grid.len();
-    i32 cols = grid[0].len();
-    i32 count = 0;
+fn s1(string[] grid) {
+    let rows = grid.len();
+    let cols = grid[0].len();
+    let count = 0;
 
-    string word = "XMAS";
-    Array<void *> *dirs = Array::new(
+    let word = "XMAS";
+    let dirs = [
         Tuple::new(0, 1),
         Tuple::new(0, -1),
         Tuple::new(1, 0),
@@ -34,15 +34,11 @@ fn s1(Array<string> *grid) {
         Tuple::new(-1, -1),
         Tuple::new(1, -1),
         Tuple::new(-1, 1)
-    );
+    ];
 
-    defer dirs.free();
-
-    for i32 r = 0; r < rows; r += 1 {
-        for i32 c = 0; c < cols; c += 1 {
-            for i32 d = 0; d < dirs.len(); d += 1 {
-                Tuple<i32, i32> *dir = dirs[d];
-
+    for let r = 0; r < rows; r += 1 {
+        for let c = 0; c < cols; c += 1 {
+            for dir in dirs {
                 if check_word(grid, word, r, c, dir.x, dir.y) {
                     count += 1;
                 }
@@ -53,12 +49,11 @@ fn s1(Array<string> *grid) {
     return count;
 }
 
-fn pattern_exists(Array<void *> *pat, Array<char> *pattern) -> bool {
-    for i32 i = 0; i < pat.len(); i += 1 {
-        Array<string> *inner = pat[i];
-        bool matches = true;
+fn pattern_exists(string[][] pat, char[] pattern) -> bool {
+    for inner in pat {
+        let matches = true;
 
-        for i32 j = 0; j < inner.len(); j += 1 {
+        for let j = 0; j < inner.len(); j += 1 {
             if inner[j] != pattern[j] {
                 matches = false;
                 break;
@@ -73,26 +68,24 @@ fn pattern_exists(Array<void *> *pat, Array<char> *pattern) -> bool {
     return false;
 }
 
-fn check_pattern(Array<string> *grid, Array<void *> *pat, i32 x, i32 y) {
-    Array<char> *p1 = Array::new(grid[x][y], grid[x + 1][y + 1], grid[x + 2][y + 2]);
-    Array<char> *p2 = Array::new(grid[x][y + 2], grid[x + 1][y + 1], grid[x + 2][y]);
+fn check_pattern(string[] grid, string[][] pat, i32 x, i32 y) {
+    let p1 = [grid[x][y], grid[x + 1][y + 1], grid[x + 2][y + 2]];
+    let p2 = [grid[x][y + 2], grid[x + 1][y + 1], grid[x + 2][y]];
     return pattern_exists(pat, p1) && pattern_exists(pat, p2);
 }
 
-fn s2(Array<string> *grid) {
-    i32 rows = grid.len();
-    i32 cols = grid[0].len();
-    i32 count = 0;
+fn s2(string[] grid) {
+    let rows = grid.len();
+    let cols = grid[0].len();
+    let count = 0;
 
-    Array<void *> *pat = Array::new(
-        Array::new<string>("M", "A", "S"),
-        Array::new<string>("S", "A", "M"),
-    );
+    let pat = [
+        ["M", "A", "S"],
+        ["S", "A", "M"],
+    ];
 
-    defer pat.free();
-
-    for i32 i = 0; i < rows - 2; i += 1 {
-        for i32 j = 0; j < cols - 2; j += 1 {
+    for let i = 0; i < rows - 2; i += 1 {
+        for let j = 0; j < cols - 2; j += 1 {
             if check_pattern(grid, pat, i, j) {
                 count += 1;
             }
@@ -104,9 +97,8 @@ fn s2(Array<string> *grid) {
 
 
 fn main(i32 argc, string *argv) {
-    string contents = io::read_to_string(argv[1]);
-    Array<string> *grid = contents.split("\n");
-    defer grid.free();
+    let contents = io::read_to_string(argv[1]);
+    let grid = contents.split("\n");
 
     io::dbg(s1(grid));
     io::dbg(s2(grid));

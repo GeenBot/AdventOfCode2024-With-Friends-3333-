@@ -2,155 +2,157 @@ use std/collections/array;
 use std/collections/hashset;
 use std/io;
 
-fn checksum(Array<i64> *bls) {
+fn checksum(i64[] blocks) {
     i64 sum = 0;
 
-    for i32 i = 0; i < bls.len(); i += 1 {
-        if bls[i] != -1 {
-            sum += i * bls[i];
+    for block in blocks {
+        if block != -1 {
+            sum += #i(block) * block;
         }
     }
 
     return sum;
 }
 
-fn s1(Array<i32> *ns) {
-    Array<i64> *bls = Array::new();
+fn s1(i32[] numbers) {
+    i64[] blocks = [];
     i64 id = 0;
 
-    for i32 i = 0; i < ns.len(); i += 2 {
-        i64 n = ns[i];
-        for i32 j = 0; j < n; j += 1 {
-            bls.push(id);
+    for n in numbers {
+        for let j = 0; j < n; j += 1 {
+            blocks.push(id);
         }
+
         id += 1;
 
-        if i + 1 < ns.len() {
-            for i32 j = 0; j < ns[i + 1]; j += 1 {
-                bls.push(-1);
+        if #i(n) + 1 < numbers.len() {
+            for let j = 0; j < numbers[#i(n) + 1]; j += 1 {
+                blocks.push(-1);
             }
         }
+
+        #i(n) += 1; // Increment by 2
     }
 
-    Array<i32> *e = Array::new();
-    for i32 i = 0; i < bls.len(); i += 1 {
-        if bls[i] == -1 {
-            e.push(i);
+    i32[] empty = [];
+
+    for block in blocks {
+        if block == -1 {
+            empty.push(#i(block));
         }
     }
 
-    i32 lne = bls.len() - 1;
-    for i32 k = 0; k < e.len(); k += 1 {
-        i32 spos = e[k];
-        while lne > spos && bls[lne] == -1 {
-            lne -= 1;
+    let last_non_empty = blocks.len() - 1;
+
+    for start_pos in empty {
+        while last_non_empty > start_pos && blocks[last_non_empty] == -1 {
+            last_non_empty -= 1;
         }
 
-        if lne <= spos {
+        if last_non_empty <= start_pos {
             break;
         }
 
-        bls[spos] = bls[lne];
-        bls[lne] = -1;
+        blocks[start_pos] = blocks[last_non_empty];
+        blocks[last_non_empty] = -1;
 
-        lne -= 1;
+        last_non_empty -= 1;
     }
 
-    return checksum(bls);
+    return checksum(blocks);
 }
 
-fn s2(Array<i32> *ns) {
-    HashSet<i64> *ids = HashSet::new();
-    Array<i64> *bls = Array::new();
-    Array<i64> *szs = Array::new();
-    Array<i32> *fs = Array::new();
-    Array<i32> *fl = Array::new();
+fn s2(i32[] numbers) {
+    let ids = HashSet::new<i64>();
+    i64[] blocks = [];
+    i64[] sizes = [];
+    i32[] free_sections = [];
+    i32[] free_sizes = [];
     i64 id = 0;
 
-    for i32 i = 0; i < ns.len(); i += 2 {
-        i64 n = ns[i];
-        szs.push(n);
+    for n in numbers {
+        sizes.push(n);
         ids.add(id);
 
-        for i32 j = 0; j < n; j += 1 {
-            bls.push(id);
+        for let j = 0; j < n; j += 1 {
+            blocks.push(id);
         }
 
         id += 1;
 
-        if i + 1 < ns.len() {
-            i32 start = bls.len();
+        if #i(n) + 1 < numbers.len() {
+            let start = blocks.len();
 
-            for i32 j = 0; j < ns[i + 1]; j += 1 {
-                bls.push(-1);
+            for let j = 0; j < numbers[#i(n) + 1]; j += 1 {
+                blocks.push(-1);
             }
 
-            fs.push(start);
-            fl.push(ns[i + 1]);
+            free_sections.push(start);
+            free_sizes.push(numbers[#i(n) + 1]);
         }
+
+        #i(n) += 1; // Increment by 2
     }
 
-    for i64 id = szs.len() - 1; id >= 0; id -= 1 {
+    for i64 id = sizes.len() - 1; id >= 0; id -= 1 {
         if !ids.contains(id) {
             continue;
         }
 
-        i64 sz = szs[id];
-        i32 start = -1;
+        let size = sizes[id];
+        let start = -1;
 
-        for i32 i = 0; i < bls.len(); i += 1 {
-            if bls[i] == id {
+        for let i = 0; i < blocks.len(); i += 1 {
+            if blocks[i] == id {
                 start = i;
                 break;
             }
         }
 
-        i32 bpos = -1;
+        let best_pos = -1;
 
-        for i32 j = 0; j < fs.len(); j += 1 {
-            if fl[j] >= sz {
-                bpos = fs[j];
-                fs[j] += sz;
-                fl[j] -= sz;
+        for let j = 0; j < free_sections.len(); j += 1 {
+            if free_sizes[j] >= size {
+                best_pos = free_sections[j];
+                free_sections[j] += size;
+                free_sizes[j] -= size;
 
-                if fl[j] == 0 {
-                    fs.remove(j);
-                    fl.remove(j);
+                if free_sizes[j] == 0 {
+                    free_sections.remove(j);
+                    free_sizes.remove(j);
                 }
 
                 break;
             }
         }
 
-        if (bpos != -1) && (bpos < start) {
-            for i32 i = start; i < start + sz; i += 1 {
-                bls[i] = -1;
+        if (best_pos != -1) && (best_pos < start) {
+            for let i = start; i < start + size; i += 1 {
+                blocks[i] = -1;
             }
 
-            fs.push(start);
-            fl.push(sz);
+            free_sections.push(start);
+            free_sizes.push(size);
 
-            for i32 i = bpos; i < bpos + sz; i += 1 {
-                bls[i] = id;
+            for let i = best_pos; i < best_pos + size; i += 1 {
+                blocks[i] = id;
             }
         }
 
         ids.remove(id);
     }
 
-    return checksum(bls);
+    return checksum(blocks);
 }
 
-
 fn main(i32 argc, string *argv) {
-    string contents = io::read_to_string(argv[1]);
-    Array<i32> *ns = Array::new();
-    defer ns.free();
+    let contents = io::read_to_string(argv[1]);
+    i32[] numbers = [];
 
-    for i32 i = 0; i < contents.len(); i += 1 {
-        ns.push(contents[i] - '0');
+    for char c in contents {
+        numbers.push(c - '0');
     }
 
-    io::dbg(s1(ns));
-    io::dbg(s2(ns));
+    io::dbg(s1(numbers));
+    io::dbg(s2(numbers));
 }
