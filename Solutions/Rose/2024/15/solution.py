@@ -68,11 +68,11 @@ def push2(b, dir, bs, ws):
     elif dir[1] == 1:
         if rpos in bs:
             if not push2(rpos, dir, bs, ws):
-                return None
+                return False
     elif dir[1] == -1:
         if lpos in bs:
-            if push2(lpos, dir, bs, ws):
-                return None
+            if not push2(lpos, dir, bs, ws):
+                return False
 
     bs.remove(b)
     bs.add(npos)
@@ -105,7 +105,7 @@ def s2(x, ms):
         if npos in bs or lpos in bs:
             bsc = bs.copy()
             bpos = npos if npos in bs else lpos
-            if push2(bpos, m, bs, ws) is None:
+            if not push2(bpos, m, bs, ws):
                 bs = bsc
                 continue
         if npos not in bs and lpos not in bs:

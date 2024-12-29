@@ -1,10 +1,6 @@
-use std/collections/array;
-use std/split;
-use std/cast;
-use std/math;
-use std/io;
+use util;
 
-fn is_ordered(i32[][] rs, i32[] u) {
+fn is_ordered(i64[][] rs, i64[] u) {
     for r in rs {
         let x = r[0];
         let y = r[1];
@@ -17,7 +13,7 @@ fn is_ordered(i32[][] rs, i32[] u) {
     return true;
 }
 
-fn reorder(i32[][] rs, i32[] u) {
+fn reorder(i64[][] rs, i64[] u) {
     while true {
         let s = false;
 
@@ -40,8 +36,8 @@ fn reorder(i32[][] rs, i32[] u) {
     return u;
 }
 
-fn s1(i32[][] rs, i32[][] us) {
-    i32[] res = [];
+fn s1(i64[][] rs, i64[][] us) {
+    i64[] res = [];
 
     for u in us {
         if is_ordered(rs, u) {
@@ -54,8 +50,8 @@ fn s1(i32[][] rs, i32[][] us) {
     return sum;
 }
 
-fn s2(i32[][] rs, i32[][] us) {
-    i32[] res = [];
+fn s2(i64[][] rs, i64[][] us) {
+    i64[] res = [];
 
     for u in us {
         if !is_ordered(rs, u) {
@@ -69,18 +65,12 @@ fn s2(i32[][] rs, i32[][] us) {
     return sum;
 }
 
-fn get_list(string list, string delimiter) -> i32[][] {
+fn get_list(string list, string delimiter) -> i64[][] {
     let parts = list.split("\n");
     let res = [];
 
     for part in parts {
-        let inner = part.split(delimiter);
-        i32[] numbers = [];
-
-        for let j = 0; j < inner.len(); j += 1 {
-            numbers.push(i32::parse(inner[j]));
-        }
-
+        let numbers = part.split(delimiter).map(i64::parse);
         res.push(numbers);
     }
 

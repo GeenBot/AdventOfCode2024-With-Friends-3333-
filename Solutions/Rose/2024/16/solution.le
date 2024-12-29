@@ -1,5 +1,114 @@
-use std/io;
+use util;
 
-fn main() {
-    io::eprintln("TODO");
+const (i32, i32)[] DIRS = [$(0, 1), $(1, 0), $(0, -1), $(-1, 0)];
+
+fn solution(string[] grid, bool part2) {
+    (i32, i32) start;
+    (i32, i32) end;
+
+    for let y = 0; y < grid.len(); y += 1 {
+        for let x = 0; x < grid[0].len(); x += 1 {
+            if grid[y][x] == 'S' {
+                start = $(y, x);
+            }
+
+            if grid[y][x] == 'E' {
+                end = $(y, x);
+            }
+        }
+    }
+
+    let pq = [$(0, $$(start.x, start.y, 0))];
+    let dist = HashMap::new<Triple<i32, i32, i32> *, i32>();
+    let pre = HashMap::new<Triple<i32, i32, i32> *, any[]>();
+
+    while !pq.is_empty() {
+        let res = pq.heap_pop();
+        let cost = res.x;
+        let triple = res.y;
+        let y = triple.x;
+        let x = triple.y;
+        let dir = triple.z;
+
+        if part2 {
+            if cost > dist.get_or_insert(triple, i32::max()) {
+                continue;
+            }
+        } else {
+            if $(y, x) == end {
+                return cost;
+            }
+        }
+
+        for a in [1, -1] {
+            let ndir = (dir - a).mod(DIRS.len());
+            let ncost = cost + 1000;
+            let tmp = $$(y, x, ndir);
+
+            if ncost < dist.get_or_insert(tmp, i32::max()) {
+                dist[tmp] = ncost;
+                pq.heap_push($(ncost, tmp));
+            }
+
+            pre.get_or_insert(tmp, Array::new<any>()).push(triple);
+        }
+
+        let d = DIRS[dir];
+        let dy = d.x;
+        let dx = d.y;
+
+        let n = $(y + dy, x + dx);
+        let ny = n.x;
+        let nx = n.y;
+
+        if ny >= 0 && ny < grid.len() && nx >= 0 && nx < grid[0].len() && grid[ny][nx] != '#' {
+            let ncost = cost + 1;
+            let tmp = $$(ny, nx, dir);
+
+            if ncost < dist.get_or_insert(tmp, i32::max()) {
+                dist[tmp] = ncost;
+                pq.heap_push($(ncost, tmp));
+            }
+
+            pre.get_or_insert(tmp, Array::new<any>()).push(triple);
+        }
+    }
+
+    let ecost = i32::max();
+    let estates = Array::new<Triple<i32, i32, i32> *>();
+    let tiles = HashSet::new<(i32, i32)>();
+
+    for dir in 0..DIRS.len() {
+        let tmp = $$(end.x, end.y, dir);
+
+        if dist.get_or_insert(tmp, i32::max()) < ecost {
+            ecost = dist[tmp];
+            estates = [tmp];
+        } else { if dist.get_or_insert(tmp, i32::max()) == ecost {
+            estates.push(tmp);
+        }}
+    }
+
+    while !estates.is_empty() {
+        let current = estates.pop();
+        let y = current.x;
+        let x = current.y;
+        tiles.add($(y, x));
+
+        for Triple<i32, i32, i32> *prev in pre[current] {
+            let cost = prev.z != current.z ? 1000 : 1;
+
+            if dist.get_or_insert(prev, i32::max()) + cost == dist.get_or_insert(current, i32::max()) {
+                estates.push(prev);
+            }
+        }
+    }
+
+    return tiles.size();
+}
+
+fn main(i32 argc, string *argv) {
+    let grid = io::read_to_string(argv[1]).split("\n");
+    io::dbg(solution(grid, false));
+    io::dbg(solution(grid, true));
 }

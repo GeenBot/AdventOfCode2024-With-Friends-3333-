@@ -1,7 +1,4 @@
-use std/collections/array;
-use std/collections/tuple;
-use std/split;
-use std/io;
+use util;
 
 fn check_word(string[] grid, string word, i32 x, i32 y, i32 dx, i32 dy) {
     let rows = grid.len();
@@ -25,15 +22,15 @@ fn s1(string[] grid) {
     let count = 0;
 
     let word = "XMAS";
-    let dirs = [
-        Tuple::new(0, 1),
-        Tuple::new(0, -1),
-        Tuple::new(1, 0),
-        Tuple::new(-1, 0),
-        Tuple::new(1, 1),
-        Tuple::new(-1, -1),
-        Tuple::new(1, -1),
-        Tuple::new(-1, 1)
+    let dirs = #[
+        $(0, 1),
+        $(0, -1),
+        $(1, 0),
+        $(-1, 0),
+        $(1, 1),
+        $(-1, -1),
+        $(1, -1),
+        $(-1, 1)
     ];
 
     for let r = 0; r < rows; r += 1 {
@@ -99,7 +96,6 @@ fn s2(string[] grid) {
 fn main(i32 argc, string *argv) {
     let contents = io::read_to_string(argv[1]);
     let grid = contents.split("\n");
-
     io::dbg(s1(grid));
     io::dbg(s2(grid));
 }

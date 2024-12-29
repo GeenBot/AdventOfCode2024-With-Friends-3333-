@@ -1,8 +1,13 @@
-use std/types;
-use std/cast;
+use std/collections/hashset;
+use std/collections/hashmap;
+use std/prelude;
 global pub;
 
 fn i64::mod(i64 self, i64 other) {
+    return (self % other + other) % other;
+}
+
+fn i32::mod(i32 self, i32 other) {
     return (self % other + other) % other;
 }
 
@@ -38,45 +43,64 @@ fn string::nums(string self) {
     return numbers;
 }
 
-fn encode2<T>(T a, T b) {
-    return ((a + 512) << 12) | ((b + 128) & 0xFFF);
-}
-
-fn encode3<T>(T a, T b, T c) {
-    return ((a + 512) << 10) | ((b + 128) << 2) | c;
-}
-
-fn decode2<T>(T encoded) {
-    T *res = malloc(2 * #size(T));
-
-    res[0] = (encoded >> 12) - 512;
-    res[1] = (encoded & 0xFFF) - 128;
-
-    return res;
-}
-
-fn decode3<T>(T encoded) {
-    T *res = malloc(3 * #size(T));
-
-    res[0] = (encoded >> 10) - 512;
-    res[1] = (encoded >> 2 & 0xFF) - 128;
-    res[2] = encoded & 0x03;
-
-    return res;
-}
-
-fn tuple<T>(T x, T y) {
-    T *res = malloc(2 * #size(T));
-
-    res[0] = x;
-    res[1] = y;
-
-    return res;
-}
-
-const i32 *[] dir4 = [
-    tuple(-1, 0),
-    tuple(0, 1),
-    tuple(1, 0),
-    tuple(0, -1),
+const (i32, i32)[] dir4 = [
+    $(-1, 0),
+    $(0, 1),
+    $(1, 0),
+    $(0, -1),
 ];
+
+fn Array::heap_pop<T>(T[] pq) -> T {
+    if pq.is_empty() {
+        return nil;
+    }
+
+    let result = pq.first();
+    pq[0] = pq.last();
+    pq.pop();
+
+    let i = 0;
+    while true {
+        let smallest = i;
+        let left = 2 * i + 1;
+        let right = 2 * i + 2;
+
+        if left < pq.len() && pq[left].x < pq[smallest].x {
+            smallest = left;
+        }
+
+        if right < pq.len() && pq[right].x < pq[smallest].x {
+            smallest = right;
+        }
+
+        if smallest == i {
+            break;
+        }
+
+        let temp = pq[i];
+        pq[i] = pq[smallest];
+        pq[smallest] = temp;
+
+        i = smallest;
+    }
+
+    return result;
+}
+
+fn Array::heap_push<T>(T[] pq, T value) {
+    pq.push(value);
+    let i = pq.len() - 1;
+
+    while i > 0 {
+        let parent = (i - 1) / 2;
+
+        if pq[parent].x <= pq[i].x {
+            break;
+        }
+
+        let temp = pq[i];
+        pq[i] = pq[parent];
+        pq[parent] = temp;
+        i = parent;
+    }
+}

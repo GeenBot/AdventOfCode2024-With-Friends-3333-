@@ -1,5 +1,146 @@
-use std/io;
+use util;
 
-fn main() {
-    io::eprintln("TODO");
+struct Program {
+    i64 a; i64 b; i64 c;
+    i64[] instrs;
+};
+
+fn Program::combo(Program *self, i64 operand) {
+    if 0 <= operand && operand <= 3 {
+        return operand;
+    }
+
+    if operand == 4 {
+        return self.a;
+    }
+
+    if operand == 5 {
+        return self.b;
+    }
+
+    if operand == 6 {
+        return self.c;
+    }
+}
+
+fn Program::run(Program *self) {
+    i64[] outputs = [];
+    let ip = 0;
+
+    while ip < self.instrs.len() - 1 {
+        let opcode = self.instrs[ip];
+        let operand = self.instrs[ip + 1];
+
+        if opcode == 0 {
+            let power = self.combo(operand);
+            self.a /= (i64)math::pow(2, power);
+            ip += 2;
+            continue;
+        }
+
+        if opcode == 1 {
+            self.b ^= operand;
+            ip += 2;
+            continue;
+        }
+
+        if opcode == 2 {
+            self.b = self.combo(operand) % 8;
+            ip += 2;
+            continue;
+        }
+
+        if opcode == 3 {
+            if self.a != 0 {
+                ip = operand;
+            } else {
+                ip += 2;
+            }
+
+            continue;
+        }
+
+        if opcode == 4 {
+            self.b ^= self.c;
+            ip += 2;
+            continue;
+        }
+
+        if opcode == 5 {
+            outputs.push(self.combo(operand) % 8);
+            ip += 2;
+            continue;
+        }
+
+        if opcode == 6 {
+            let power = self.combo(operand);
+            self.b = self.a / (i64)math::pow(2, power);
+            ip += 2;
+            continue;
+        }
+
+        if opcode == 7 {
+            let power = self.combo(operand);
+            self.c = self.a / (i64)math::pow(2, power);
+            ip += 2;
+            continue;
+        }
+
+        ip += 2;
+    }
+
+    return outputs;
+}
+
+fn parse(string contents) {
+    let lines = contents.split("\n");
+
+    let a = lines[0].nums()[0];
+    let b = lines[1].nums()[0];
+    let c = lines[2].nums()[0];
+    let instrs = lines[4].nums();
+
+    return Program {
+        a = a, b = b, c = c,
+        instrs = instrs
+    };
+}
+
+fn s1(Program *program) {
+    return program.run().join(",");
+}
+
+fn s2(Program *program) {
+    i64[] valid = [0];
+
+    for l in 1..=program.instrs.len() {
+        i64[] out = [];
+
+        for num in valid {
+            for offset in 0..8 {
+                let a = 8 * num + offset;
+                program.a = a;
+                program.b = 0;
+                program.c = 0;
+
+                let res = program.run();
+                let sliced = program.instrs.slice(-l, -1);
+
+                if res == sliced {
+                    out.push(a);
+                }
+            }
+        }
+
+        valid = out;
+    }
+
+    return valid.min();
+}
+
+fn main(i32 argc, string *argv) {
+    let c = io::read_to_string(argv[1]);
+    let res = parse(c);
+    io::dbg(s1(&res));
+    io::dbg(s2(&res));
 }

@@ -1,20 +1,14 @@
-use std/collections/array;
-use std/split;
-use std/cast;
-use std/math;
-use std/io;
+use util;
 
-fn lists(i32[] ls, i32[] rs, string input) {
-    let parts = input.split("\n");
+fn lists(string input) {
+    let parts = input.split("\n").map<i64[]>(string::nums);
+    let ls = parts.map<i64>(fn(i64[] nums) -> nums[0]);
+    let rs = parts.map<i64>(fn(i64[] nums) -> nums[1]);
 
-    for part in parts {
-        let numbers = part.split("   ");
-        ls.push(i32::parse(numbers[0]));
-        rs.push(i32::parse(numbers[1]));
-    }
+    return $(ls, rs);
 }
 
-fn s1(i32[] ls, i32[] rs) {
+fn s1(i64[] ls, i64[] rs) {
     let lss = ls.clone();
     let rss = rs.clone();
     lss.sort();
@@ -29,8 +23,8 @@ fn s1(i32[] ls, i32[] rs) {
     return dist;
 }
 
-fn s2(i32[] ls, i32[] rs) {
-    i32[] counts = [];
+fn s2(i64[] ls, i64[] rs) {
+    i64[] counts = [];
 
     for r in rs {
         while r >= counts.len() {
@@ -52,9 +46,9 @@ fn s2(i32[] ls, i32[] rs) {
 }
 
 fn main(i32 argc, string *argv) {
-    i32[] ls = [];
-    i32[] rs = [];
-    lists(ls, rs, io::read_to_string(argv[1]));
+    let res = lists(io::read_to_string(argv[1]));
+    let ls = res.x;
+    let rs = res.y;
 
     io::dbg(s1(ls, rs));
     io::dbg(s2(ls, rs));

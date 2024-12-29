@@ -1,8 +1,4 @@
-use std/collections/array;
-use std/split;
-use std/cast;
-use std/math;
-use std/io;
+use util;
 
 fn concat(i64 a, i64 b) -> i64 {
     if b < 10 { return a * 10 + b; }
@@ -52,12 +48,12 @@ fn is_valid(i64 target, i64[] numbers, bool part2) {
     return false;
 }
 
-fn solution(i64[][] number_arrays, bool part2) -> i64 {
+fn solution(i64[][] numbers, bool part2) -> i64 {
     i64 total;
 
-    for numbers in number_arrays {
-        if is_valid(numbers[0], numbers, part2) {
-            total += numbers[0];
+    for nums in numbers {
+        if is_valid(nums[0], nums, part2) {
+            total += nums[0];
         }
     }
 
@@ -66,23 +62,10 @@ fn solution(i64[][] number_arrays, bool part2) -> i64 {
 
 fn main(i32 argc, string *argv) {
     let contents = io::read_to_string(argv[1]);
-    let lines = contents.split("\n");
-    i64[][] number_arrays = [];
+    i64[][] numbers = contents
+        .split("\n")
+        .map(string::nums);
 
-    for line in lines {
-        let parts = line.split(": ");
-        let strings = parts[1].split(" ");
-
-        let target = i64::parse(parts[0]);
-        let numbers = [target];
-
-        for str in strings {
-            numbers.push(i64::parse(str));
-        }
-
-        number_arrays.push(numbers);
-    }
-
-    io::dbg(solution(number_arrays, false));
-    io::dbg(solution(number_arrays, true));
+    io::dbg(solution(numbers, false));
+    io::dbg(solution(numbers, true));
 }

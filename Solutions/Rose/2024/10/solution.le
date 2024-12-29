@@ -1,18 +1,12 @@
-use std/collections/array;
-use std/collections/hashset;
-use std/split;
-use std/cast;
-use std/io;
-
 use util;
 
-fn find(i32[][] grid) -> i32 *[] {
+fn find(i32[][] grid) -> (i32, i32)[] {
     let ts = [];
 
     for let row = 0; row < grid.len(); row += 1 {
         for let col = 0; col < grid[0].len(); col += 1 {
             if grid[row][col] == 0 {
-                ts.push(tuple(row, col));
+                ts.push($(row, col));
             }
         }
     }
@@ -20,24 +14,24 @@ fn find(i32[][] grid) -> i32 *[] {
     return ts;
 }
 
-fn search(i32[][] grid, i32 *start, bool part2) -> i32 {
-    let v = HashSet::new<i32>();
+fn search(i32[][] grid, (i32, i32) start, bool part2) -> i32 {
+    let v = HashSet::new<(i32, i32)>();
     let stack = [start];
     let c = 0;
 
     while !stack.is_empty() {
-        i32 *inner = stack.pop();
-        i32 x = inner[0];
-        i32 y = inner[1];
+        (i32, i32) inner = stack.pop();
+        let x = inner.x;
+        let y = inner.y;
 
         if !part2 {
-            let encoded = encode2(x, y);
+            let p = $(x, y);
 
-            if v.contains(encoded) {
+            if v.contains(p) {
                 continue;
             }
 
-            v.add(encoded);
+            v.add(p);
         }
 
         if grid[x][y] == 9 {
@@ -45,12 +39,12 @@ fn search(i32[][] grid, i32 *start, bool part2) -> i32 {
         }
 
         for dir in dir4 {
-            let nx = x + dir[0];
-            let ny = y + dir[1];
+            i32 nx = x + dir.x;
+            i32 ny = y + dir.y;
 
             if nx >= 0 && nx < grid.len() && ny >= 0 && ny < grid[0].len() {
                 if grid[nx][ny] == grid[x][y] + 1 {
-                    stack.push(tuple(nx, ny));
+                    stack.push($(nx, ny));
                 }
             }
         }
@@ -59,7 +53,7 @@ fn search(i32[][] grid, i32 *start, bool part2) -> i32 {
     return c;
 }
 
-fn solution(i32[][] grid, i32 *[] ts, bool part2) {
+fn solution(i32[][] grid, (i32, i32)[] ts, bool part2) {
     let c = 0;
 
     for t in ts {
@@ -71,20 +65,13 @@ fn solution(i32[][] grid, i32 *[] ts, bool part2) {
 
 fn main(i32 argc, string *argv) {
     let contents = io::read_to_string(argv[1]);
-    let lines = contents.split("\n");
-    i32[][] grid = [];
-
-    for line in lines {
-        i32[] inner = [];
-
-        for char c in line {
-            inner.push(c - '0');
-        }
-
-        grid.push(inner);
-    }
-
+    let grid = contents.split("\n")
+        .map<char[]>(Array::from_string)
+        .map<string>(fn(char[] x) -> x.join(" "))
+        .map<i64[]>(string::nums)
+        .map<i32[]>(fn(i64[] x) -> x.map<i32>(i64::truncate));
     let ts = find(grid);
+
     io::dbg(solution(grid, ts, false));
     io::dbg(solution(grid, ts, true));
 }

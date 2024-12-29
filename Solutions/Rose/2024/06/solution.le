@@ -1,11 +1,6 @@
-use std/collections/hashset;
-use std/collections/array;
-use std/split;
-use std/io;
-
 use util;
 
-fn loop(i32 cx, i32 cy, i32 sx, i32 sy, HashSet<i32> *visited, string[] grid) {
+fn loop(i32 cx, i32 cy, i32 sx, i32 sy, HashSet<Triple<i32, i32, i32> *> *visited, string[] grid) {
     visited.clear();
 
     let y = sy;
@@ -13,10 +8,10 @@ fn loop(i32 cx, i32 cy, i32 sx, i32 sy, HashSet<i32> *visited, string[] grid) {
     let dir = 0;
 
     while true {
-        let encoded = encode3(x, y, dir);
+        let triple = $$(x, y, dir);
         let tuple = dir4[dir];
-        let ny = y + tuple[0];
-        let nx = x + tuple[1];
+        let ny = y + tuple.x;
+        let nx = x + tuple.y;
 
         if (ny < 0) || (ny >= grid.len()) || (nx < 0) || (nx >= grid[0].len()) {
             return false;
@@ -28,11 +23,11 @@ fn loop(i32 cx, i32 cy, i32 sx, i32 sy, HashSet<i32> *visited, string[] grid) {
             y = ny;
             x = nx;
 
-            if visited.contains(encoded) {
+            if visited.contains(triple) {
                 return true;
             }
 
-            visited.add(encoded);
+            visited.add(triple);
         }
     }
 }
@@ -42,8 +37,8 @@ fn s1(i32 *x, i32 *y, i32 *dir, string[] grid) {
 
     while true {
         let inner = dir4[*dir];
-        let dx = inner[0];
-        let dy = inner[1];
+        let dx = inner.x;
+        let dy = inner.y;
         let ny = *y + dx;
         let nx = *x + dy;
 
@@ -69,7 +64,7 @@ fn s1(i32 *x, i32 *y, i32 *dir, string[] grid) {
 }
 
 fn s2(i32 sx, i32 sy, string[] grid) {
-    let visited = HashSet::with_capacity<i32>(grid.len() * grid[0].len());
+    let visited = HashSet::with_capacity<Triple<i32, i32, i32> *>(grid.len() * grid[0].len());
     let c = 0;
 
     for row in grid {

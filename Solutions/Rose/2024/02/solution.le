@@ -1,11 +1,7 @@
-use std/collections/array;
-use std/split;
-use std/cast;
-use std/time;
-use std/io;
+use util;
 
-fn is_safe(i32[] r) {
-    i32[] diff = Array::with_capacity(r.len() - 1);
+fn is_safe(i64[] r) {
+    i64[] diff = Array::with_capacity(r.len() - 1);
 
     for let i = 0; i < r.len() - 1; i += 1 {
         diff.push(r[i + 1] - r[i]);
@@ -31,7 +27,7 @@ fn is_safe(i32[] r) {
     return inc || dec;
 }
 
-fn is_safe2(i32[] r) {
+fn is_safe2(i64[] r) {
     if is_safe(r) {
         return true;
     }
@@ -52,14 +48,7 @@ fn solution(string d, bool p2) -> i32 {
     let lines = d.split("\n");
     let c = 0;
 
-    for l in lines {
-        let parts = l.split(" ");
-        i32[] r = Array::with_capacity(parts.len());
-
-        for let j = 0; j < parts.len(); j += 1 {
-            r.push(i32::parse(parts[j]));
-        }
-
+    for i64[] r in lines.map(string::nums) {
         if p2 {
             if is_safe2(r) {
                 c += 1;

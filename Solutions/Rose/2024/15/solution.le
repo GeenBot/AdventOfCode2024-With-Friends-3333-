@@ -1,5 +1,209 @@
-use std/io;
+use util;
 
-fn main() {
-    io::eprintln("TODO");
+const (i32, i32)[] DIRS = [$(0, 1), $(0, -1), $(1, 0), $(-1, 0)];
+const char[] OPTS = ['>', '<', 'v', '^'];
+
+struct Result {
+    char[][] layout;
+    (i32, i32)[] ms;
+};
+
+struct State {
+    HashSet<(i32, i32)> *ws;
+    HashSet<(i32, i32)> *bs;
+    (i32, i32) r;
+};
+
+fn parse(string c) {
+    let parts = c.split("\n\n");
+    let ls = parts[0].split("\n");
+    (i32, i32)[] ms = [];
+    char[][] layout = [];
+
+    for m in parts[1].replace("\n", "") {
+        ms.push(DIRS[OPTS.index(m)]);
+    }
+
+    for l in ls {
+        layout.push(Array::from_string(l));
+    }
+
+    return Result { layout = layout, ms = ms };
+}
+
+fn state(char[][] layout) {
+    let ws = HashSet::new<(i32, i32)>();
+    let bs = HashSet::new<(i32, i32)>();
+    (i32, i32) r = nil;
+
+    for line in layout {
+        for c in line {
+            if c == '#' {
+                ws.add($(#i(line), #i(c)));
+            }
+
+            if c == 'O' {
+                bs.add($(#i(line), #i(c)));
+            }
+
+            if c == '@' {
+                r = $(#i(line), #i(c));
+            }
+        }
+    }
+
+    return State { ws = ws, bs = bs, r = r };
+}
+
+fn state2(char[][] layout) {
+    let ws = HashSet::new<(i32, i32)>();
+    let bs = HashSet::new<(i32, i32)>();
+    (i32, i32) r = nil;
+
+    for line in layout {
+        for c in line {
+            let j = #i(c) * 2; // Double j without mutating it
+
+            if c == '#' {
+                ws.add($(#i(line), j));
+                ws.add($(#i(line), j + 1));
+            }
+
+            if c == 'O' {
+                bs.add($(#i(line), j));
+            }
+
+            if c == '@' {
+                r = $(#i(line), j);
+            }
+        }
+    }
+
+    return State { ws = ws, bs = bs, r = r };
+}
+
+
+fn push((i32, i32) b, (i32, i32) dir, HashSet<(i32, i32)> *bs, HashSet<(i32, i32)> *ws) {
+    let npos = $(b.x + dir.x, b.y + dir.y);
+
+    if ws.contains(npos) {
+        return false;
+    }
+
+    if bs.contains(npos) {
+        if !push(npos, dir, bs, ws) {
+            return false;
+        }
+    }
+
+    bs.remove(b);
+    bs.add(npos);
+    return true;
+}
+
+fn push2((i32, i32) b, (i32, i32) dir, HashSet<(i32, i32)> *bs, HashSet<(i32, i32)> *ws) {
+    let npos = $(b.x + dir.x, b.y + dir.y);
+    let lpos = $(npos.x, npos.y - 1);
+    let rpos = $(npos.x, npos.y + 1);
+
+    if ws.contains(npos) || ws.contains(rpos) {
+        return false;
+    }
+
+    if dir.x {
+        for pos in [npos, lpos, rpos] {
+            if bs.contains(pos) {
+                if !push2(pos, dir, bs, ws) {
+                    return false;
+                }
+            }
+        }
+    } else { if dir.y == 1 {
+        if bs.contains(rpos) {
+            if !push2(rpos, dir, bs, ws) {
+                return false;
+            }
+        }
+    } else { if dir.y == -1 {
+        if bs.contains(lpos) {
+            if !push2(lpos, dir, bs, ws) {
+                return false;
+            }
+        }
+    }}}
+
+    bs.remove(b);
+    bs.add(npos);
+    return true;
+}
+
+fn s1(char[][] layout, (i32, i32)[] ms) {
+    let res = state(layout);
+
+    for m in ms {
+        let npos = $(res.r.x + m.x, res.r.y + m.y);
+
+        if res.ws.contains(npos) {
+            continue;
+        }
+
+        if res.bs.contains(npos) {
+            if !push(npos, m, res.bs, res.ws) {
+                continue;
+            }
+        }
+
+        res.r = npos;
+    }
+
+    i32[] out = [];
+
+    for b in res.bs.values() {
+        out.push(100 * b.x + b.y);
+    }
+
+    return out.sum();
+}
+
+fn s2(char[][] layout, (i32, i32)[] ms) {
+    let res = state2(layout);
+
+    for m in ms {
+        let npos = $(res.r.x + m.x, res.r.y + m.y);
+
+        if res.ws.contains(npos) {
+            continue;
+        }
+
+        let lpos = $(npos.x, npos.y - 1);
+
+        if res.bs.contains(npos) || res.bs.contains(lpos) {
+            let bsc = res.bs.clone();
+            let bpos = res.bs.contains(npos) ? npos : lpos;
+
+            if !push2(bpos, m, res.bs, res.ws) {
+                res.bs = bsc;
+                continue;
+            }
+        }
+
+        if !res.bs.contains(npos) && !res.bs.contains(lpos) {
+            res.r = npos;
+        }
+    }
+
+    i32[] out = [];
+
+    for b in res.bs.values() {
+        out.push(100 * b.x + b.y);
+    }
+
+    return out.sum();
+}
+
+fn main(i32 argc, string *argv) {
+    let c = io::read_to_string(argv[1]);
+    let res = parse(c);
+    io::dbg(s1(res.layout, res.ms));
+    io::dbg(s2(res.layout, res.ms));
 }

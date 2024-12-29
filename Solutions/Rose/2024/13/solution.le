@@ -1,9 +1,3 @@
-use std/collections/array;
-use std/split;
-use std/types;
-use std/cast;
-use std/io;
-
 use util;
 
 struct Machine {

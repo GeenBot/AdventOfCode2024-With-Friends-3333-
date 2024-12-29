@@ -14,7 +14,6 @@ def sol(grid, part2):
 
     pq = [(0, (start[0], start[1], 0))]
     dist = defaultdict(lambda: float('inf'))
-    dist[(start[0], start[1], 0)] = 0
     pre = defaultdict(list)
 
     while pq:

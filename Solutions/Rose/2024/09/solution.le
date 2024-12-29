@@ -1,6 +1,4 @@
-use std/collections/array;
-use std/collections/hashset;
-use std/io;
+use util;
 
 fn checksum(i64[] blocks) {
     i64 sum = 0;

@@ -1,35 +1,28 @@
-use std/collections/hashmap;
-use std/collections/hashset;
-use std/collections/array;
-use std/split;
-use std/cast;
-use std/io;
-
 use util;
 
-fn dfs(string[] grid, HashSet<i32> *v, i32 r, i32 c, i32 p) {
-    let a = HashSet::new<i32>();
-    let stack = [encode2(r, c)];
+const (i32, i32)[] DIRS = [$(0, 1), $(0, -1), $(1, 0), $(-1, 0)];
+
+fn dfs(char[][] grid, bool[][] v, (i32, i32) rc, i32 p) {
+    let a = HashSet::new<(i32, i32)>();
+    let stack = [rc];
 
     while !stack.is_empty() {
-        let encoded = stack.pop();
-        let decoded = decode2<i32>(encoded);
-        let x = decoded[0];
-        let y = decoded[1];
+        let item = stack.pop();
+        let x = item.x;
+        let y = item.y;
 
-        if (v.contains(encoded)) || (x < 0) || (x >= grid.len())
-            || (y < 0) || (y >= grid[0].len()) || (grid[x][y] != p) {
+        if x < 0 || x >= grid.len()
+            || y < 0 || y >= grid[0].len()
+            || v[x][y] || grid[x][y] != p {
             continue;
         }
 
-        v.add(encoded);
-        a.add(encoded);
+        v[x][y] = true;
+        a.add(item);
 
-        for d in [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]] {
-            i32 encoded = encode2(d[0], d[1]);
-
-            if !v.contains(encoded) {
-                stack.push(encoded);
+        for d in #[$(x + 1, y), $(x - 1, y), $(x, y + 1), $(x, y - 1)] {
+            if d.x >= 0 && d.x < v.len() && d.y >= 0 && d.y < v[0].len() && !v[d.x][d.y] {
+                stack.push(d);
             }
         }
     }
@@ -37,74 +30,49 @@ fn dfs(string[] grid, HashSet<i32> *v, i32 r, i32 c, i32 p) {
     return a;
 }
 
-fn solution(string[] grid, bool part2) {
-    let rs = HashMap::new<i32, HashSet<i32> *[]>();
-    let v = HashSet::new<i32>();
+fn solution(HashMap<i32, HashSet<(i32, i32)> *[]> *rs, bool part2) {
     let res = 0;
 
-    for let r = 0; r < grid.len(); r += 1 {
-        for let c = 0; c < grid[0].len(); c += 1 {
-            if !v.contains(encode2<i32>(r, c)) {
-                let area = dfs(grid, v, r, c, grid[r][c]);
-
-                if !rs.contains_key(grid[r][c]) {
-                    rs[grid[r][c]] = Array::new<HashSet<i32> *>();
-                }
-
-                rs[grid[r][c]].push(area);
-            }
-        }
-    }
-
     for key in rs.keys() {
-        let value = rs[key];
-
-        for set in value {
+        for set in rs[key] {
             let area = set.values();
             let bc = 0;
             let sc = 0;
 
-            for item in area {
-                let p = decode2(item);
-
-                let nds = [
-                    [p[0] + dir4[0][0], p[1] + dir4[0][1]],
-                    [p[0] + dir4[1][0], p[1] + dir4[1][1]],
-                    [p[0] + dir4[2][0], p[1] + dir4[2][1]],
-                    [p[0] + dir4[3][0], p[1] + dir4[3][1]],
+            for p in area {
+                let nds = #[
+                    $(p.x + DIRS[0].x, p.y + DIRS[0].y),
+                    $(p.x + DIRS[1].x, p.y + DIRS[1].y),
+                    $(p.x + DIRS[2].x, p.y + DIRS[2].y),
+                    $(p.x + DIRS[3].x, p.y + DIRS[3].y),
                 ];
 
                 for d in nds {
-                    if !area.contains(encode2(d[0], d[1])) {
+                    if !area.contains(d) {
                         bc += 1;
                     }
                 }
             }
 
-            for d in dir4 {
-                let s = HashSet::new<i32>();
+            for d in DIRS {
+                let s = HashSet::new<(i32, i32)>();
 
-                for item in area {
-                    let p = decode2<i32>(item);
-                    let encoded = encode2<i32>(p[0] + d[0], p[1] + d[1]);
+                for p in area {
+                    let x = $(p.x + d.x, p.y + d.y);
 
-                    if !area.contains(encoded) {
-                        s.add(encoded);
+                    if !area.contains(x) {
+                        s.add(x);
                     }
                 }
 
-                let sr = HashSet::new<i32>();
-                let sv = s.values();
+                let sr = HashSet::new<(i32, i32)>();
 
-                for item in sv {
-                    let p = decode2<i32>(item);
-                    let x = encode2<i32>(p[0] + d[1], p[1] + d[0]);
+                for p in s.values() {
+                    let x = $(p.x + d.y, p.y + d.x);
 
-                    while sv.contains(x) {
+                    while s.contains(x) {
                         sr.add(x);
-
-                        let de = decode2<i32>(x);
-                        x = encode2<i32>(de[0] + d[1], de[1] + d[0]);
+                        x = $(x.x + d.y, x.y + d.x);
                     }
                 }
 
@@ -124,7 +92,32 @@ fn solution(string[] grid, bool part2) {
 
 fn main(i32 argc, string *argv) {
     let contents = io::read_to_string(argv[1]);
-    let grid = contents.split("\n");
-    io::dbg(solution(grid, false));
-    io::dbg(solution(grid, true));
+    let parts = contents.split("\n");
+    let rs = HashMap::new<i32, HashSet<(i32, i32)> *[]>();
+    char[][] grid = parts.map(Array::from_string);
+    bool[][] v = [];
+
+    for part in parts {
+        bool[] inner = [];
+
+        for _ in part {
+            inner.push(false);
+        }
+
+        v.push(inner);
+    }
+
+    for let r = 0; r < grid.len(); r += 1 {
+        for let c = 0; c < grid[0].len(); c += 1 {
+            let x = $(r, c);
+
+            if !v[r][c] {
+                let area = dfs(grid, v, x, grid[r][c]);
+                rs.get_or_insert(grid[r][c], Array::new<any>()).push(area);
+            }
+        }
+    }
+
+    io::dbg(solution(rs, false));
+    io::dbg(solution(rs, true));
 }
