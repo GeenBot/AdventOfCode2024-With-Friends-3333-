@@ -90,8 +90,8 @@ fn solution(HashMap<i32, HashSet<(i32, i32)> *[]> *rs, bool part2) {
     return res;
 }
 
-fn main(i32 argc, string *argv) {
-    let contents = io::read_to_string(argv[1]);
+fn main(string[] args) {
+    let contents = io::read_to_string(args[1]);
     let parts = contents.split("\n");
     let rs = HashMap::new<i32, HashSet<(i32, i32)> *[]>();
     char[][] grid = parts.map(Array::from_string);

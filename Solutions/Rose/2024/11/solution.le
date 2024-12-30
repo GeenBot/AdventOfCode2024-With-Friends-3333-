@@ -51,8 +51,8 @@ fn sol(HashMap<i64, i64> *sc) {
     return nsc;
 }
 
-fn main(i32 argc, string *argv) {
-    let contents = io::read_to_string(argv[1]);
+fn main(string[] args) {
+    let contents = io::read_to_string(args[1]);
     let sc = HashMap::new<i64, i64>();
     let ss = contents.nums();
 

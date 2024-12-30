@@ -138,8 +138,8 @@ fn s2(Program *program) {
     return valid.min();
 }
 
-fn main(i32 argc, string *argv) {
-    let c = io::read_to_string(argv[1]);
+fn main(string[] args) {
+    let c = io::read_to_string(args[1]);
     let res = parse(c);
     io::dbg(s1(&res));
     io::dbg(s2(&res));

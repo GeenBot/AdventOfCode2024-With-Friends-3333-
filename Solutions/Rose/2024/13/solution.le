@@ -7,8 +7,8 @@ struct Machine {
 };
 
 fn Machine::new(i64[] a, i64[] b, i64[] p) {
-    Machine *machine = malloc(#size(Machine));
-    *machine = malloc(#size(Machine));
+    Machine *machine = #env.allocator.alloc(#size(Machine *));
+    *machine = #env.allocator.alloc(#size(Machine));
 
     machine.a = a;
     machine.b = b;
@@ -67,8 +67,8 @@ fn solution(string contents, i64 offset) {
     return total;
 }
 
-fn main(i32 argc, string *argv) {
-    let contents = io::read_to_string(argv[1]);
+fn main(string[] args) {
+    let contents = io::read_to_string(args[1]);
     io::dbg(solution(contents, 0));
     io::dbg(solution(contents, 1e13));
 }

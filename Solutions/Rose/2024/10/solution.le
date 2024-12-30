@@ -63,8 +63,8 @@ fn solution(i32[][] grid, (i32, i32)[] ts, bool part2) {
     return c;
 }
 
-fn main(i32 argc, string *argv) {
-    let contents = io::read_to_string(argv[1]);
+fn main(string[] args) {
+    let contents = io::read_to_string(args[1]);
     let grid = contents.split("\n")
         .map<char[]>(Array::from_string)
         .map<string>(fn(char[] x) -> x.join(" "))

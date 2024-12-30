@@ -45,8 +45,8 @@ fn s2(i64[] ls, i64[] rs) {
     return score;
 }
 
-fn main(i32 argc, string *argv) {
-    let res = lists(io::read_to_string(argv[1]));
+fn main(string[] args) {
+    let res = lists(io::read_to_string(args[1]));
     let ls = res.x;
     let rs = res.y;
 

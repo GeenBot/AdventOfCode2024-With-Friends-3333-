@@ -107,8 +107,8 @@ fn solution(string[] grid, bool part2) {
     return tiles.size();
 }
 
-fn main(i32 argc, string *argv) {
-    let grid = io::read_to_string(argv[1]).split("\n");
+fn main(string[] args) {
+    let grid = io::read_to_string(args[1]).split("\n");
     io::dbg(solution(grid, false));
     io::dbg(solution(grid, true));
 }

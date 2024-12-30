@@ -9,8 +9,8 @@ struct Robot {
 };
 
 fn Robot::new(i64[] p, i64[] v) {
-    Robot *robot = malloc(#size(Robot));
-    *robot = malloc(#size(Robot));
+    Robot *robot = #env.allocator.alloc(#size(Robot *));
+    *robot = #env.allocator.alloc(#size(Robot));
 
     robot.p = p;
     robot.v = v;
@@ -102,8 +102,8 @@ fn solution(Robot *[] robots) {
     return s;
 }
 
-fn main(i32 argc, string *argv) {
-    let contents = io::read_to_string(argv[1]);
+fn main(string[] args) {
+    let contents = io::read_to_string(args[1]);
     let lines = contents.split("\n");
     let robots = parse(lines);
     io::dbg(solution(robots));

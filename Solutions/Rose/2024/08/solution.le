@@ -87,8 +87,8 @@ fn solution(string[] grid, i32[][] coords, bool part2) {
     return length;
 }
 
-fn main(i32 argc, string *argv) {
-    let contents = io::read_to_string(argv[1]);
+fn main(string[] args) {
+    let contents = io::read_to_string(args[1]);
     let grid = contents.split("\n");
     let coords = get_coords(grid);
 
