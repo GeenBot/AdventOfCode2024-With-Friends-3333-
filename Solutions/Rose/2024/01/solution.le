@@ -2,8 +2,8 @@ use util;
 
 fn lists(string input) {
     let parts = input.split("\n").map<i64[]>(string::nums);
-    let ls = parts.map<i64>(fn(i64[] nums) -> nums[0]);
-    let rs = parts.map<i64>(fn(i64[] nums) -> nums[1]);
+    let ls = parts.map<i64>(fn(i64[] nums) nums[0]);
+    let rs = parts.map<i64>(fn(i64[] nums) nums[1]);
 
     return $(ls, rs);
 }

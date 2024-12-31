@@ -67,9 +67,9 @@ fn main(string[] args) {
     let contents = io::read_to_string(args[1]);
     let grid = contents.split("\n")
         .map<char[]>(Array::from_string)
-        .map<string>(fn(char[] x) -> x.join(" "))
+        .map<string>(fn(char[] x) x.join(" "))
         .map<i64[]>(string::nums)
-        .map<i32[]>(fn(i64[] x) -> x.map<i32>(i64::truncate));
+        .map<i32[]>(Array::truncate);
     let ts = find(grid);
 
     io::dbg(solution(grid, ts, false));
