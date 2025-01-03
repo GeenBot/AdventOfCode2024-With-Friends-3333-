@@ -59,6 +59,10 @@ fn Array::heap_pop<T>(T[] pq) -> T {
     pq[0] = pq.last();
     pq.pop();
 
+    if pq.is_empty() {
+        return result;
+    }
+
     let i = 0;
     while true {
         let smallest = i;

@@ -1,5 +1,41 @@
-use std/io;
+use util;
 
-fn main() {
-    io::eprintln("TODO");
+const (i32, i32)[] DIRS = [$(-1, 0), $(1, 0), $(0, -1), $(0, 1)];
+const i32 P1 = 2;
+const i32 P2 = 20;
+
+fn parse(string c) {
+    let grid = c.split("\n").map<char[]>(Array::from_string);
+    let ws = HashSet::new<(i32, i32)>();
+    (i32, i32) start = nil;
+    (i32, i32) end = nil;
+
+    for y in 0..grid.len() {
+        for x in 0..grid[0].len() {
+            if grid[y][x] == 'S' {
+                start = $(y, x);
+                grid[y][x] = '.';
+            }
+
+            if grid[y][x] == 'E' {
+                end = $(y, x);
+                grid[y][x] = '.';
+            }
+
+            if grid[y][x] == '#' {
+                ws.add($(y, x));
+            }
+        }
+    }
+
+    return $($(grid, ws), $(start, end));
+}
+
+fn main(string[] args) {
+    let parts = parse(io::read_to_string(args[1]));
+    let grid = parts.x.x;
+    let ws = parts.x.y;
+    let start = parts.y.x;
+    let end = parts.y.y;
+    io::dbg(grid, ws, start, end);
 }

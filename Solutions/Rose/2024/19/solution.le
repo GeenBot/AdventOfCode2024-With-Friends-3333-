@@ -1,5 +1,39 @@
-use std/io;
+use util;
 
-fn main() {
-    io::eprintln("TODO");
+fn count_ways(HashMap<string, i64> *memo, string d, string[] ps) {
+    if memo.contains_key(d) {
+        return memo[d];
+    }
+
+    if d.is_empty() {
+        return 1;
+    }
+
+    i64 ways = 0;
+    for p in ps {
+        if d.starts_with(p) {
+            let remaining = d.slice(p.len(), d.len());
+            ways += count_ways(memo, remaining, ps);
+        }
+    }
+
+    memo[d] = ways;
+    return ways;
+}
+
+fn main(string[] args) {
+    let parts = io::read_to_string(args[1]).split("\n\n");
+    let ps = parts[0].split(", ");
+    let ds = parts[1].split("\n");
+    let memo = HashMap::new<string, i64>();
+
+    i64 c1 = i64 c2 = 0;
+
+    for d in ds {
+        let res = count_ways(memo, d, ps);
+        c1 += res >= 1;
+        c2 += res;
+    }
+
+    io::dbg(c1, c2);
 }

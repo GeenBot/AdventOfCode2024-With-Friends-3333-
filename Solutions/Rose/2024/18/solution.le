@@ -1,5 +1,102 @@
-use std/io;
+use util;
 
-fn main() {
-    io::eprintln("TODO");
+fn dist((i64, i64) p1, (i64, i64) p2) {
+    return math::abs(p1.x - p2.x) + math::abs(p1.y - p2.y);
+}
+
+fn nbors((i64, i64) pos, (i32, i32)[] dirs, i64 size) {
+    (i64, i64)[] nbors = [];
+
+    for d in dirs {
+        let nx = pos.x + d.x;
+        let ny = pos.y + d.y;
+
+        if (0 <= nx) && (nx < size) && (0 <= ny) && (ny < size) {
+            nbors.push($(nx, ny));
+        }
+    }
+
+    return nbors;
+}
+
+fn find(HashSet<(i64, i64)> *c, i64 size) {
+    let start = $<i64, i64>(0, 0);
+    let t = $(size - 1, size - 1);
+    let dirs = [$(0, 1), $(1, 0), $(0, -1), $(-1, 0)];
+
+    let queue = [$(dist(start, t), $$(0, start, [start]))];
+    let v = HashSet::new<(i64, i64)>();
+
+    while !queue.is_empty() {
+        let item = queue.heap_pop().y;
+        let cost = item.x;
+        let cur = item.y;
+        let path = item.z;
+
+        if cur == t {
+            return path.len() - 1;
+        }
+
+        if v.contains(cur) {
+            continue;
+        }
+
+        v.add(cur);
+
+        for npos in nbors(cur, dirs, size) {
+            if !v.contains(npos) && !c.contains(npos) {
+                let npath = path.clone();
+                npath.push(npos);
+                let ncost = cost + 1;
+                let priority = ncost + dist(npos, t);
+                queue.heap_push($(priority, $$(ncost, npos, npath)));
+            }
+        }
+    }
+
+    return -1;
+}
+
+fn solve((i64, i64)[] c, i64 s, i32 b) {
+    let new_c = HashSet::from(c.slice(0, b));
+    return find(new_c, s);
+}
+
+fn find2((i64, i64)[] cs, i64 s) {
+    let low = 0;
+    let high = cs.len() - 1;
+    (i64, i64) blocked = nil;
+
+    while low <= high {
+        let mid = (low + high) / 2;
+        let cx = HashSet::from(cs.slice(0, mid + 1));
+
+        if find(cx, s) == -1 {
+            blocked = cs[mid];
+            high = mid - 1;
+        } else {
+            low = mid + 1;
+        }
+    }
+
+    return blocked;
+}
+
+fn solve2((i64, i64)[] c, i64 s) {
+    let b = find2(c, s);
+    return "{},{}".format(b.x, b.y);
+}
+
+fn main(string[] args) {
+    (i64, i64)[] c = [];
+
+    for line in io::read_to_string(args[1]).split("\n") {
+        let parts = line.nums();
+        c.push($(parts[0], parts[1]));
+    }
+
+    io::dbg(solve(c, 71, 1024));
+    io::dbg(solve2(c, 71));
+    // io::dbg(solve(c, 7, 12));
+    // io::dbg(solve2(c, 7));
 }

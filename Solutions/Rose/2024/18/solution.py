@@ -42,28 +42,35 @@ def find(c, size):
     return None
 
 def solve(c, s=71, b=1024):
-    c = set(list(c)[:b])
+    c = set(c[:b])
     return find(c, s)
 
 def find2(cs, s):
-    cx = set()
+    low, high = 0, len(cs) - 1
+    blocked = None
 
-    for i, c in enumerate(cs):
-        cx.add(c)
+    while low <= high:
+        mid = (low + high) // 2
+        cx = set(cs[:mid+1])
+
         if find(cx, s) is None:
-            return c
-    return None
+            blocked = cs[mid]
+            high = mid - 1
+        else:
+            low = mid + 1
+
+    return blocked
 
 def solve2(c, s=71):
     b = find2(c, s)
     return f"{b[0]},{b[1]}"
 
 with open(sys.argv[1]) as f:
-    c = set()
+    c = []
 
     for line in f:
         x, y = map(int, line.strip().split(','))
-        c.add((x, y))
+        c.append((x, y))
 
     print(solve(c))
     print(solve2(c))
