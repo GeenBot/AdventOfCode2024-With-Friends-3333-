@@ -3,22 +3,7 @@ use util;
 const i64 rows = 101;
 const i64 cols = 103;
 
-struct Robot {
-    i64[] p;
-    i64[] v;
-};
-
-fn Robot::new(i64[] p, i64[] v) {
-    Robot *robot = #env.allocator.alloc(#size(Robot *));
-    *robot = #env.allocator.alloc(#size(Robot));
-
-    robot.p = p;
-    robot.v = v;
-
-    return robot;
-}
-
-fn parse(string[] c) -> Robot *[] {
+fn parse(string[] c) -> (i64[], i64[])[] {
     let robots = [];
 
     for line in c {
@@ -26,7 +11,7 @@ fn parse(string[] c) -> Robot *[] {
         i64[] p = parts[0].nums();
         i64[] v = parts[1].nums();
 
-        robots.push(Robot::new(p, v));
+        robots.push($(p, v));
     }
 
     return robots;
@@ -55,7 +40,7 @@ fn quadrant(i64 nx, i64 ny, i32[] ans) {
     ans[3] += 1;
 }
 
-fn solution(Robot *[] robots) {
+fn solution((i64[], i64[])[] robots) {
     let ans = [0, 0, 0, 0];
     let s = 0;
 
@@ -76,8 +61,8 @@ fn solution(Robot *[] robots) {
         let inv = false;
 
         for let i = 0; i < robots.len(); i += 1 {
-            let nx = (robots[i].p[0] + s * robots[i].v[0]).mod(rows);
-            let ny = (robots[i].p[1] + s * robots[i].v[1]).mod(cols);
+            let nx = (robots[i].x[0] + s * robots[i].y[0]).mod(rows);
+            let ny = (robots[i].x[1] + s * robots[i].y[1]).mod(cols);
 
             if s == 100 {
                 quadrant(nx, ny, ans);

@@ -7,8 +7,7 @@ struct Machine {
 };
 
 fn Machine::new(i64[] a, i64[] b, i64[] p) {
-    Machine *machine = #env.allocator.alloc(#size(Machine *));
-    *machine = #env.allocator.alloc(#size(Machine));
+    Machine *machine = #env.allocator.alloc(#size(Machine));
 
     machine.a = a;
     machine.b = b;
