@@ -96,6 +96,6 @@ fn s2(string[] grid) {
 fn main(string[] args) {
     let contents = io::read_to_string(args[1]);
     let grid = contents.split("\n");
-    io::dbg(s1(grid));
-    io::dbg(s2(grid));
+    $dbg(s1(grid));
+    $dbg(s2(grid));
 }

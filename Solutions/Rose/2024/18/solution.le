@@ -95,8 +95,8 @@ fn main(string[] args) {
         c.push($(parts[0], parts[1]));
     }
 
-    io::dbg(solve(c, 71, 1024));
-    io::dbg(solve2(c, 71));
-    // io::dbg(solve(c, 7, 12));
-    // io::dbg(solve2(c, 7));
+    $dbg(solve(c, 71, 1024));
+    $dbg(solve2(c, 71));
+    // $dbg(solve(c, 7, 12));
+    // $dbg(solve2(c, 7));
 }

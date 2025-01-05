@@ -151,6 +151,6 @@ fn main(string[] args) {
         numbers.push(c - '0');
     }
 
-    io::dbg(s1(numbers));
-    io::dbg(s2(numbers));
+    $dbg(s1(numbers));
+    $dbg(s2(numbers));
 }

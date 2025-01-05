@@ -132,6 +132,6 @@ fn main(string[] args) {
     }
 
     // s1 MUST run for s2 to give the right answer
-    io::dbg(s1(&x, &y, &dir, grid));
-    io::dbg(s2(sx, sy, grid));
+    $dbg(s1(&x, &y, &dir, grid));
+    $dbg(s2(sx, sy, grid));
 }

@@ -68,6 +68,6 @@ fn solution(string contents, i64 offset) {
 
 fn main(string[] args) {
     let contents = io::read_to_string(args[1]);
-    io::dbg(solution(contents, 0));
-    io::dbg(solution(contents, 1e13));
+    $dbg(solution(contents, 0));
+    $dbg(solution(contents, 1e13));
 }

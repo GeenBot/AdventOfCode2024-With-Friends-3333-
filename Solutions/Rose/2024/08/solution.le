@@ -92,6 +92,6 @@ fn main(string[] args) {
     let grid = contents.split("\n");
     let coords = get_coords(grid);
 
-    io::dbg(solution(grid, coords, false));
-    io::dbg(solution(grid, coords, true));
+    $dbg(solution(grid, coords, false));
+    $dbg(solution(grid, coords, true));
 }

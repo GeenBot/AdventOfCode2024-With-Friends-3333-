@@ -66,6 +66,6 @@ fn main(string[] args) {
         .split("\n")
         .map(string::nums);
 
-    io::dbg(solution(numbers, false));
-    io::dbg(solution(numbers, true));
+    $dbg(solution(numbers, false));
+    $dbg(solution(numbers, true));
 }

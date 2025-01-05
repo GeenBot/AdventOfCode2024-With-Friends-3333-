@@ -76,7 +76,7 @@ fn solution((i64[], i64[])[] robots) {
         }
 
         if s == 100 {
-            io::dbg(ans[0] * ans[1] * ans[2] * ans[3]);
+            $dbg(ans[0] * ans[1] * ans[2] * ans[3]);
         }
 
         if !inv {
@@ -91,5 +91,5 @@ fn main(string[] args) {
     let contents = io::read_to_string(args[1]);
     let lines = contents.split("\n");
     let robots = parse(lines);
-    io::dbg(solution(robots));
+    $dbg(solution(robots));
 }

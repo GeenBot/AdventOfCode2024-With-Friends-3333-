@@ -118,6 +118,6 @@ fn main(string[] args) {
         }
     }
 
-    io::dbg(solution(rs, false));
-    io::dbg(solution(rs, true));
+    $dbg(solution(rs, false));
+    $dbg(solution(rs, true));
 }

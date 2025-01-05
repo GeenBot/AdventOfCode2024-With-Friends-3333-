@@ -37,5 +37,5 @@ fn main(string[] args) {
     let ws = parts.x.y;
     let start = parts.y.x;
     let end = parts.y.y;
-    io::dbg(grid, ws, start, end);
+    $dbg(grid, ws, start, end);
 }

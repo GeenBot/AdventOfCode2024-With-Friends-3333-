@@ -72,6 +72,6 @@ fn main(string[] args) {
         .map<i32[]>(Array::truncate);
     let ts = find(grid);
 
-    io::dbg(solution(grid, ts, false));
-    io::dbg(solution(grid, ts, true));
+    $dbg(solution(grid, ts, false));
+    $dbg(solution(grid, ts, true));
 }

@@ -35,5 +35,5 @@ fn main(string[] args) {
         c2 += res;
     }
 
-    io::dbg(c1, c2);
+    $dbg(c1, c2);
 }

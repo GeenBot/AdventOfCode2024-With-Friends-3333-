@@ -50,6 +50,6 @@ fn main(string[] args) {
     let ls = res.x;
     let rs = res.y;
 
-    io::dbg(s1(ls, rs));
-    io::dbg(s2(ls, rs));
+    $dbg(s1(ls, rs));
+    $dbg(s2(ls, rs));
 }

@@ -65,6 +65,6 @@ fn solution(string d, bool p2) -> i32 {
 
 fn main(string[] args) {
     let input = io::read_to_string(args[1]);
-    io::dbg(solution(input, false));
-    io::dbg(solution(input, true));
+    $dbg(solution(input, false));
+    $dbg(solution(input, true));
 }

@@ -141,6 +141,6 @@ fn s2(Program *program) {
 fn main(string[] args) {
     let c = io::read_to_string(args[1]);
     let res = parse(c);
-    io::dbg(s1(&res));
-    io::dbg(s2(&res));
+    $dbg(s1(&res));
+    $dbg(s2(&res));
 }

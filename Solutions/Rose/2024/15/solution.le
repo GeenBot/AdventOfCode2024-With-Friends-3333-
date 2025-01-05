@@ -204,6 +204,6 @@ fn s2(char[][] layout, (i32, i32)[] ms) {
 fn main(string[] args) {
     let c = io::read_to_string(args[1]);
     let res = parse(c);
-    io::dbg(s1(res.layout, res.ms));
-    io::dbg(s2(res.layout, res.ms));
+    $dbg(s1(res.layout, res.ms));
+    $dbg(s2(res.layout, res.ms));
 }

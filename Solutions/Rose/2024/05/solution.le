@@ -84,6 +84,6 @@ fn main(string[] args) {
     let rs = get_list(parts[0], "|");
     let us = get_list(parts[1], ",");
 
-    io::dbg(s1(rs, us));
-    io::dbg(s2(rs, us));
+    $dbg(s1(rs, us));
+    $dbg(s2(rs, us));
 }

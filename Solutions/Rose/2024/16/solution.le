@@ -109,6 +109,6 @@ fn solution(string[] grid, bool part2) {
 
 fn main(string[] args) {
     let grid = io::read_to_string(args[1]).split("\n");
-    io::dbg(solution(grid, false));
-    io::dbg(solution(grid, true));
+    $dbg(solution(grid, false));
+    $dbg(solution(grid, true));
 }

@@ -66,11 +66,11 @@ fn main(string[] args) {
 
     for let i = 0; i < 75; i += 1 {
         if i == 25 {
-            io::dbg(sc.sum());
+            $dbg(sc.sum());
         }
 
         sc = sol(sc);
     }
 
-    io::dbg(sc.sum());
+    $dbg(sc.sum());
 }

@@ -35,6 +35,6 @@ fn s2(string contents) {
 
 fn main(string[] args) {
     let contents = io::read_to_string(args[1]);
-    io::dbg(s1(contents));
-    io::dbg(s2(contents));
+    $dbg(s1(contents));
+    $dbg(s2(contents));
 }
