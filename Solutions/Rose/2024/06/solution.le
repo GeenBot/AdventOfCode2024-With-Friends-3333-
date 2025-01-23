@@ -1,64 +1,37 @@
 use util;
 
-struct LoopEnv {
-    i32 cx;
-    i32 cy;
-    i32 *y;
-    i32 *x;
-    i32 *dir;
-    bool *ret;
-    HashSet<Triple<i32, i32, i32> *> *visited;
-    (i32, i32)[] dirs;
-    string[] grid;
-};
-
-fn loop(i32 cx, i32 cy, i32 sx, i32 sy, HashSet<Triple<i32, i32, i32> *> *visited, (i32, i32)[] dirs, string[] grid) {
-    visited.clear();
+fn loop(i32 cx, i32 cy, i32 sx, i32 sy, (i32, i32)[] dirs, string[] grid) {
+    HashSet<Triple<i32, i32, i32> *> *visited = HashSet::with_capacity(grid.len() * grid[0].len());
 
     let y = sy;
     let x = sx;
     let dir = 0;
-    let ret = false;
 
-    $scoped(fn(LoopEnv *env) {
-        while true {
-            let triple = $$(*env.y, *env.x, *env.dir);
+    while true {
+        let triple = $$(y, x, dir);
 
-            if env.visited.contains(triple) {
-                *env.ret = true;
-                return;
-            }
-
-            env.visited.add(triple);
-            let tuple = env.dirs[*env.dir];
-            let ny = *env.y + tuple.x;
-            let nx = *env.x + tuple.y;
-
-            if (ny < 0) || (ny >= env.grid.len()) || (nx < 0) || (nx >= env.grid[0].len()) {
-                *env.ret = false;
-                return;
-            }
-
-            if env.grid[ny][nx] == '#' || (ny == env.cy && nx == env.cx) {
-                *env.dir = (*env.dir + 1) % env.dirs.len();
-            } else {
-                *env.y = ny;
-                *env.x = nx;
-            }
+        if visited.contains(triple) {
+            return true;
         }
-    }, &LoopEnv {
-        cx = cx,
-        cy = cy,
-        y = &y,
-        x = &x,
-        dir = &dir,
-        ret = &ret,
-        visited = visited,
-        dirs = dirs,
-        grid = grid
-    });
 
-    return ret;
+        visited.add(triple);
+        let tuple = dirs[dir];
+        let ny = y + tuple.x;
+        let nx = x + tuple.y;
+
+        if (ny < 0) || (ny >= grid.len()) || (nx < 0) || (nx >= grid[0].len()) {
+            return false;
+        }
+
+        if grid[ny][nx] == '#' || (ny == cy && nx == cx) {
+            dir = (dir + 1) % dirs.len();
+        } else {
+            y = ny;
+            x = nx;
+        }
+    }
+
+    return false;
 }
 
 fn s1(i32 *x, i32 *y, i32 *dir, string[] grid) {
@@ -93,7 +66,6 @@ fn s1(i32 *x, i32 *y, i32 *dir, string[] grid) {
 }
 
 fn s2(i32 sx, i32 sy, string[] grid) {
-    let visited = HashSet::with_capacity<Triple<i32, i32, i32> *>(grid.len() * grid[0].len());
     let dirs = dir4;
     let c = 0;
 
@@ -103,7 +75,7 @@ fn s2(i32 sx, i32 sy, string[] grid) {
                 continue;
             }
 
-            if col == 'X' && loop(#i(col), #i(row), sx, sy, visited, dirs, grid) {
+            if col == 'X' && loop(#i(col), #i(row), sx, sy, dirs, grid) {
                 c += 1;
             }
         }
