@@ -1,4 +1,4 @@
-use util;
+use ../util;
 
 const (i32, i32)[] DIRS = [$(0, 1), $(0, -1), $(1, 0), $(-1, 0)];
 const char[] OPTS = ['>', '<', 'v', '^'];

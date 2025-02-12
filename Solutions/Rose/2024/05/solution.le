@@ -1,4 +1,4 @@
-use util;
+use ../util;
 
 fn is_ordered(i64[][] rs, i64[] u) {
     for r in rs {

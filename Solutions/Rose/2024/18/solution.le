@@ -1,4 +1,4 @@
-use util;
+use ../util;
 
 fn dist((i64, i64) p1, (i64, i64) p2) {
     return math::abs(p1.x - p2.x) + math::abs(p1.y - p2.y);

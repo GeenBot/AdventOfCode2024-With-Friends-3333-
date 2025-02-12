@@ -1,22 +1,22 @@
-use util;
+use ../util;
 
 fn lists(string input) {
-    let parts = input.split("\n").map<i64[]>(string::nums);
-    let ls = parts.map<i64>(fn(i64[] nums) nums[0]);
-    let rs = parts.map<i64>(fn(i64[] nums) nums[1]);
+    parts := input.split("\n").map<i64[]>(string::nums);
+    ls := parts.map<i64>(fn(i64[] nums) nums[0]);
+    rs := parts.map<i64>(fn(i64[] nums) nums[1]);
 
     return $(ls, rs);
 }
 
 fn s1(i64[] ls, i64[] rs) {
-    let lss = ls.clone();
-    let rss = rs.clone();
+    lss := ls.clone();
+    rss := rs.clone();
     lss.sort();
     rss.sort();
 
-    let dist = 0;
+    dist := 0;
 
-    for let i = 0; i < lss.len(); i += 1 {
+    for i in 0..lss.len() {
         dist += math::abs(lss[i] - rss[i]);
     }
 
@@ -24,7 +24,7 @@ fn s1(i64[] ls, i64[] rs) {
 }
 
 fn s2(i64[] ls, i64[] rs) {
-    i64[] counts = [];
+    counts := [i64;];
 
     for r in rs {
         while r >= counts.len() {
@@ -34,7 +34,7 @@ fn s2(i64[] ls, i64[] rs) {
         counts[r] += 1;
     }
 
-    let score = 0;
+    score := 0;
 
     for l in ls {
         if l < counts.len() {
@@ -46,9 +46,9 @@ fn s2(i64[] ls, i64[] rs) {
 }
 
 fn main(string[] args) {
-    let res = lists(io::read_to_string(args[1]));
-    let ls = res.x;
-    let rs = res.y;
+    res := lists(io::read_to_string(args[1]));
+    ls := res.x;
+    rs := res.y;
 
     $dbg(s1(ls, rs));
     $dbg(s2(ls, rs));

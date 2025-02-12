@@ -1,4 +1,4 @@
-use util;
+use ../util;
 
 const i64 rows = 101;
 const i64 cols = 103;

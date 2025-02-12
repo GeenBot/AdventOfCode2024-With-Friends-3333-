@@ -1,4 +1,4 @@
-use util;
+use ../util;
 
 fn loop(i32 cx, i32 cy, i32 sx, i32 sy, (i32, i32)[] dirs, string[] grid) {
     HashSet<Triple<i32, i32, i32> *> *visited = HashSet::with_capacity(grid.len() * grid[0].len());

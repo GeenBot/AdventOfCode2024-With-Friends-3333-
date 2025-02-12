@@ -1,4 +1,4 @@
-use util;
+use ../util;
 
 fn checksum(i64[] blocks) {
     i64 sum = 0;

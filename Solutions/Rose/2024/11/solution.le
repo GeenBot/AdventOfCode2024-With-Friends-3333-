@@ -1,4 +1,4 @@
-use util;
+use ../util;
 
 fn HashMap::sum<T, U>(HashMap<T, U> *self) {
     i64 sum = 0;

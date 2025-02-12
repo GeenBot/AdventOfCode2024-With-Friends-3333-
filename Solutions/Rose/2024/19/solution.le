@@ -1,4 +1,4 @@
-use util;
+use ../util;
 
 fn count_ways(HashMap<string, i64> *memo, string d, string[] ps) {
     if memo.contains_key(d) {

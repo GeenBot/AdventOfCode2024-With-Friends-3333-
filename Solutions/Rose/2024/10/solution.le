@@ -1,4 +1,4 @@
-use util;
+use ../util;
 
 fn find(i32[][] grid) -> (i32, i32)[] {
     let ts = [];

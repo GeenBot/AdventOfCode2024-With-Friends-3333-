@@ -1,4 +1,4 @@
-use util;
+use ../util;
 
 fn check_word(string[] grid, string word, i32 x, i32 y, i32 dx, i32 dy) {
     let rows = grid.len();
